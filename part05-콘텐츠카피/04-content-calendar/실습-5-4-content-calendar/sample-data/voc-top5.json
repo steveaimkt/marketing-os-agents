@@ -1,0 +1,48 @@
+{
+  "description": "4-4 voc-analyzer 산출물 픽스처. 5-3 landing-copy 가 페인 섹션을 '고객의 언어'로 쓸 때 사용. 4-4 실습의 분석 결과와 동일 수치.",
+  "analyzed_period": "2026-06-04 ~ 2026-06-10",
+  "total_analyzed": 40,
+  "top5_painpoints": [
+    {
+      "rank": 1,
+      "painpoint": "용기·펌프 불편",
+      "frequency": 7,
+      "customer_language": ["펌프가 한 번에 너무 많이 나와요", "입구가 좁아서 화장솜에 적시기 불편", "반쯤 쓰니까 안 나와요"],
+      "suggested_action": "패드형·리필 라인 검토"
+    },
+    {
+      "rank": 2,
+      "painpoint": "배송·환불 처리 지연",
+      "frequency": 5,
+      "customer_language": ["배송이 일주일 걸렸어요", "환불이 5일째 안 들어와요"],
+      "suggested_action": "CS 프로세스 점검 (긴급도 높음)"
+    },
+    {
+      "rank": 3,
+      "painpoint": "향 호불호",
+      "frequency": 3,
+      "customer_language": ["향이 저한테는 좀 강해요", "무향이면 좋겠어요"],
+      "suggested_action": "무향 라인 검토 + 상세페이지에 향 강도 안내"
+    },
+    {
+      "rank": 4,
+      "painpoint": "가격 부담",
+      "frequency": 3,
+      "customer_language": ["가격이 조금 부담", "세일 때 쟁여두려고요"],
+      "suggested_action": "구독·세트 혜택 커뮤니케이션"
+    },
+    {
+      "rank": 5,
+      "painpoint": "챌린지 운영 이슈",
+      "frequency": 3,
+      "customer_language": ["쿠폰이 안 와요", "인증 사진이 날아가서 속상"],
+      "suggested_action": "이벤트 운영·앱 연동 개선"
+    }
+  ],
+  "positive_signals": [
+    "모공·결 개선 체감 (3주째 쓰는데 모공이 덜 보여요)",
+    "저자극 신뢰 (민감성인데 매일 써도 트러블 없음)",
+    "챌린지 완주 뿌듯함 (인증 캘린더 잘 만들었어요)",
+    "유분 조절 (유분기가 오후까지 안 올라오는 건 처음)"
+  ]
+}

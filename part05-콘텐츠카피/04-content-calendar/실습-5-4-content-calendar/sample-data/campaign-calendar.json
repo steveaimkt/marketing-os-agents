@@ -1,0 +1,38 @@
+{
+  "description": "Google Calendar 시딩용 캠페인 일정 4건. 날짜는 시딩 시점 기준 상대 일자로 환산한다.",
+  "events": [
+    {
+      "title": "21일 모공 챌린지 시즌 2 오픈",
+      "start_offset_days": 3,
+      "duration_days": 21,
+      "memo": "참여 인증 UGC 캠페인 · 완주자 쿠폰"
+    },
+    {
+      "title": "포어 토너 V2 1+1 기획전",
+      "start_offset_days": 7,
+      "duration_days": 5,
+      "memo": "자사몰 단독 · 재고 한정"
+    },
+    {
+      "title": "여름 유분 케어 시즌 캠페인",
+      "start_offset_days": 14,
+      "duration_days": 14,
+      "memo": "시즌 키워드 : 유분·번들거림·쿨링"
+    },
+    {
+      "title": "신제품 토너 패드 티저",
+      "start_offset_days": 21,
+      "duration_days": 7,
+      "memo": "4-3 인사이트 반영 : 패드 포맷 경쟁 대응"
+    }
+  ],
+  "weekly_channel_mix": {
+    "Instagram": 7,
+    "Facebook": 3,
+    "X": 14,
+    "LinkedIn": 2,
+    "Blog": 1,
+    "TikTok": 3,
+    "total_per_week": 30
+  }
+}

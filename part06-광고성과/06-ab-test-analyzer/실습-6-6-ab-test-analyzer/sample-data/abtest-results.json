@@ -1,0 +1,40 @@
+{
+  "description": "A/B 테스트 픽스처 3건. 확정승 / 박빙 / 표본 부족이 1건씩 있어 Bayesian 판정 3종 (채택 / 다른 차원 테스트 / 데이터 추가 수집) 을 모두 시연한다.",
+  "tests": [
+    {
+      "test_id": "AB-001",
+      "platform": "Meta",
+      "dimension": "헤드라인 소구",
+      "hypothesis": "긴급형 (21일이면 충분) 이 혜택형 (모공 케어 시작) 보다 전환율이 높다",
+      "variant_a": {"name": "혜택형 헤드라인", "impressions": 142000, "clicks": 4260, "conversions": 118},
+      "variant_b": {"name": "긴급형 헤드라인", "impressions": 139000, "clicks": 4720, "conversions": 162},
+      "expected_verdict": "B 승리 확률 약 99% : 긴급형 채택 권고. 승리 패턴을 라이브러리에 적재"
+    },
+    {
+      "test_id": "AB-002",
+      "platform": "Meta",
+      "dimension": "크리에이티브 형식",
+      "hypothesis": "릴스 영상이 정적 캐러셀보다 전환율이 높다",
+      "variant_a": {"name": "정적 캐러셀", "impressions": 98000, "clicks": 2940, "conversions": 84},
+      "variant_b": {"name": "릴스 15초", "impressions": 101000, "clicks": 3030, "conversions": 87},
+      "expected_verdict": "B 승리 확률 약 58% : 판정 불가 수준의 박빙. 형식이 아닌 다른 차원 (소구·타겟) 테스트 권고"
+    },
+    {
+      "test_id": "AB-003",
+      "platform": "Google Ads",
+      "dimension": "랜딩 페이지",
+      "hypothesis": "챌린지 전용 LP 가 제품 상세 LP 보다 전환율이 높다",
+      "variant_a": {"name": "제품 상세 LP", "impressions": 8400, "clicks": 252, "conversions": 11},
+      "variant_b": {"name": "챌린지 전용 LP", "impressions": 8100, "clicks": 243, "conversions": 16},
+      "expected_verdict": "전환 합계 27건 (50건 미만) : 표본 부족. 판정 보류 + 2주 추가 수집 권고"
+    }
+  ],
+  "notion_library": {
+    "page_name": "A/B 테스트 결과 라이브러리",
+    "accumulated_patterns_example": [
+      "긴급형 소구가 혜택형보다 전환율 +37% (AB-001 · 2026-06)",
+      "수치 증명 헤드라인이 추상 헤드라인보다 CTR +22% (AB-pre · 2026-05)"
+    ],
+    "consumer": "ad-copy-ab (5-2) 가 이 라이브러리를 읽어 승리 패턴에 가중치를 둔다"
+  }
+}

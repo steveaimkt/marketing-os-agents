@@ -1,0 +1,42 @@
+{
+  "description": "Meta Ads 성과 픽스처. 캠페인 3 + 광고세트 6 · 최근 7일 + 전주 비교. ROAS 우수·평균·부진이 섞여 TOP/BOTTOM 선별과 추세 분석이 재현된다. 통화: KRW.",
+  "account": "결로아 광고 계정 (가상 · act_000000000)",
+  "period": {"current": "2026-06-04 ~ 2026-06-10", "previous": "2026-05-28 ~ 2026-06-03"},
+  "campaigns": [
+    {
+      "campaign": "21일 챌린지 전환 캠페인",
+      "objective": "전환",
+      "current": {"spend": 1420000, "impressions": 612000, "clicks": 18360, "conversions": 392, "revenue": 5396000},
+      "previous": {"spend": 1380000, "impressions": 588000, "clicks": 15880, "conversions": 341, "revenue": 4520000},
+      "adsets": [
+        {"adset": "관심사: 스킨케어·성분", "current": {"spend": 760000, "impressions": 322000, "clicks": 11270, "conversions": 246, "revenue": 3444000}, "previous": {"spend": 740000, "impressions": 310000, "clicks": 9300, "conversions": 200, "revenue": 2780000}},
+        {"adset": "리타게팅: 장바구니 이탈", "current": {"spend": 660000, "impressions": 290000, "clicks": 7090, "conversions": 146, "revenue": 1952000}, "previous": {"spend": 640000, "impressions": 278000, "clicks": 6580, "conversions": 141, "revenue": 1740000}}
+      ]
+    },
+    {
+      "campaign": "포어 토너 V2 론칭 트래픽",
+      "objective": "트래픽",
+      "current": {"spend": 890000, "impressions": 998000, "clicks": 27940, "conversions": 118, "revenue": 1534000},
+      "previous": {"spend": 850000, "impressions": 941000, "clicks": 28230, "conversions": 132, "revenue": 1716000},
+      "adsets": [
+        {"adset": "광역: 20-34 여성", "current": {"spend": 520000, "impressions": 640000, "clicks": 17920, "conversions": 64, "revenue": 832000}, "previous": {"spend": 500000, "impressions": 610000, "clicks": 18300, "conversions": 78, "revenue": 1014000}},
+        {"adset": "유사 타겟 1%", "current": {"spend": 370000, "impressions": 358000, "clicks": 10020, "conversions": 54, "revenue": 702000}, "previous": {"spend": 350000, "impressions": 331000, "clicks": 9930, "conversions": 54, "revenue": 702000}}
+      ]
+    },
+    {
+      "campaign": "브랜드 인지 리치 캠페인",
+      "objective": "도달",
+      "current": {"spend": 640000, "impressions": 1850000, "clicks": 5550, "conversions": 21, "revenue": 273000},
+      "previous": {"spend": 600000, "impressions": 1690000, "clicks": 5910, "conversions": 35, "revenue": 455000},
+      "adsets": [
+        {"adset": "동영상 조회: 릴스", "current": {"spend": 390000, "impressions": 1180000, "clicks": 3540, "conversions": 14, "revenue": 182000}, "previous": {"spend": 360000, "impressions": 1050000, "clicks": 3680, "conversions": 22, "revenue": 286000}},
+        {"adset": "정적 배너: 피드", "current": {"spend": 250000, "impressions": 670000, "clicks": 2010, "conversions": 7, "revenue": 91000}, "previous": {"spend": 240000, "impressions": 640000, "clicks": 2230, "conversions": 13, "revenue": 169000}}
+      ]
+    }
+  ],
+  "expected_analysis": {
+    "top_roas": "21일 챌린지 전환 캠페인 ROAS 3.80 (전주 3.28 대비 +16%) · 특히 관심사 세트 4.53",
+    "bottom_roas": "브랜드 인지 리치 ROAS 0.43 (전주 0.76 대비 -44%) · 목적이 도달이므로 ROAS 단독 판단 주의 주석",
+    "alert_candidates": "리치 캠페인 ROAS < 1.0 · 6-5 임계값 시연과 연결"
+  }
+}

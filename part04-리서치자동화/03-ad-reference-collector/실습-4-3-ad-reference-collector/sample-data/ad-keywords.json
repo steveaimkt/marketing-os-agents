@@ -1,0 +1,13 @@
+{
+  "search_keywords": ["토너", "모공", "21일 챌린지", "수분", "나이아신아마이드", "토너 패드"],
+  "filters": {
+    "country": "KR",
+    "date_range_days": 14,
+    "min_relevance_score": 3
+  },
+  "google_sheets": {
+    "spreadsheet_name": "광고 레퍼런스 카탈로그",
+    "catalog_columns": ["수집일", "광고주", "카테고리", "헤드라인", "본문 발췌", "CTA", "이미지 URL", "관련성 점수"],
+    "insights_sheet_name": "이번 주 인사이트"
+  }
+}

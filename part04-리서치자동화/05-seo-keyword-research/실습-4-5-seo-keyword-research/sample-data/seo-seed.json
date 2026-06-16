@@ -1,0 +1,11 @@
+{
+  "seed_keyword": "토너 모공",
+  "target_market": "KR",
+  "content_format": "blog",
+  "expansion_target": "연관 키워드 30개 확장 후 우선순위 TOP 20 산출",
+  "priority_formula": "(월간 검색량 × 전환 잠재력) / 경쟁도",
+  "google_sheets": {
+    "spreadsheet_name": "SEO 키워드 TOP 20",
+    "columns": ["키워드", "월간 검색량", "경쟁도(0~1)", "전환 잠재력(1~5)", "우선순위 점수", "추천 콘텐츠"]
+  }
+}

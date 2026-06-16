@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스티브의 뉴스레터 · 맥미니 안 사도 됩니다</title>
+<style>
+  :root{
+    --ink:#16181d; --sub:#6b7280; --line:#e7e8ec;
+    --brand:#2563eb; --brand-dk:#1e40af; --soft:#eef4ff;
+    --warn:#b45309; --warn-bg:#fff7ed; --bg:#f3f4f6; --num:#1d4ed8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Pretendard","Apple SD Gothic Neo",sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.78;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:660px;margin:0 auto;background:#fff}
+  /* preheader (인박스 미리보기용 · 본문 상단 숨김 처리 가능) */
+  .preheader{font-size:12px;color:var(--sub);padding:14px 30px 0}
+  /* 헤더 */
+  .head{padding:26px 30px 18px;border-bottom:1px solid var(--line)}
+  .brand{font-weight:800;font-size:16px;letter-spacing:-.2px;color:var(--brand)}
+  .brand small{display:block;color:var(--sub);font-weight:500;font-size:12px;margin-top:3px}
+  .date{font-size:12px;color:var(--sub);margin-top:10px}
+  /* 후크 제목 */
+  .hook{padding:30px 30px 6px}
+  .hook h1{font-size:27px;line-height:1.32;font-weight:800;letter-spacing:-.6px}
+  .hook h1 .l2{display:block;color:var(--brand);margin-top:4px}
+  .datelabel{display:inline-block;font-size:11px;color:var(--sub);background:#f1f2f4;
+             border-radius:6px;padding:3px 9px;margin:14px 30px 0}
+  /* TL;DR */
+  .tldr{margin:16px 30px 4px;padding:18px 20px;background:var(--soft);
+        border-left:4px solid var(--brand);border-radius:0 10px 10px 0;font-size:15.5px}
+  .tldr b{color:var(--brand-dk)}
+  /* 목차 */
+  .toc{margin:22px 30px;padding:18px 22px;border:1px solid var(--line);border-radius:12px}
+  .toc div{font-size:15px;font-weight:600;padding:5px 0}
+  .toc .n{color:var(--brand);font-weight:800;margin-right:8px}
+  .toc .note{font-size:12px;color:var(--sub);font-weight:400;padding-top:8px}
+  /* 본문 섹션 */
+  section{padding:10px 30px 6px}
+  section h2{font-size:20px;font-weight:800;letter-spacing:-.4px;margin:22px 0 10px;line-height:1.4}
+  section h2 .n{color:var(--brand)}
+  section p{font-size:15.5px;margin:10px 0}
+  .num{color:var(--num);font-weight:800}
+  /* 비용 비교 박스 */
+  .cost{display:flex;gap:12px;margin:16px 0}
+  .cost .c{flex:1;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+  .cost .c.before{background:#fdf2f2}
+  .cost .c.after{background:var(--soft);border-color:#c7d8ff}
+  .cost .c .lab{font-size:12px;color:var(--sub)}
+  .cost .c .big{font-size:21px;font-weight:800;margin-top:4px}
+  .cost .c.after .big{color:var(--brand)}
+  .cost .c .sm{font-size:11px;color:var(--sub);margin-top:3px}
+  /* 체크리스트 박스 (설치 압축) */
+  .steps{background:#fafbfc;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+  .steps .t{font-weight:800;font-size:14px;margin-bottom:8px}
+  .steps ul{list-style:none;font-size:14px}
+  .steps li{padding:5px 0 5px 26px;position:relative}
+  .steps li::before{content:"";position:absolute;left:0;top:9px;width:14px;height:14px;
+                    border:2px solid var(--brand);border-radius:4px}
+  .steps li.key{color:var(--warn);font-weight:700}
+  .warn{background:var(--warn-bg);border-left:4px solid var(--warn);border-radius:0 10px 10px 0;
+        padding:12px 16px;margin:14px 0;font-size:14.5px;color:#7c2d12}
+  .src{display:inline-block;font-size:11px;color:var(--sub);background:#f1f2f4;border-radius:6px;padding:2px 8px;margin-top:4px}
+  /* 핵심 요약 */
+  .summary{margin:24px 30px;padding:20px 22px;background:#0f172a;border-radius:14px;color:#e2e8f0}
+  .summary h3{color:#7dd3fc;font-size:14px;margin-bottom:12px;letter-spacing:.3px}
+  .summary p{font-size:14px;margin:8px 0;color:#cbd5e1}
+  .summary b{color:#fff}
+  /* 1차 CTA (강조) */
+  .cta1{margin:26px 30px 8px;text-align:center}
+  .cta1 .lead{font-size:16px;font-weight:700;margin-bottom:14px;line-height:1.5}
+  .cta1 a{display:inline-block;background:var(--brand);color:#fff;text-decoration:none;
+          font-weight:800;font-size:17px;padding:16px 40px;border-radius:32px}
+  .cta1 .coupon{margin-top:12px;font-size:13px;color:var(--sub)}
+  .cta1 .coupon b{color:var(--warn);font-size:14px;letter-spacing:1px}
+  /* 구분선 + 2차 CTA (분리) */
+  .divider{height:1px;background:var(--line);margin:30px 30px}
+  .cta2{margin:0 30px 10px;padding:18px 20px;background:#f7f8fa;border-radius:12px}
+  .cta2 .q{font-size:14px;font-weight:700;margin-bottom:6px}
+  .cta2 p{font-size:13.5px;color:var(--sub);line-height:1.7}
+  .cta2 a{color:var(--brand);font-weight:700;text-decoration:none;font-size:14px;display:inline-block;margin-top:8px}
+  /* 푸터 */
+  .foot{padding:24px 30px;border-top:1px solid var(--line);font-size:12px;color:var(--sub);line-height:1.8}
+  .foot b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ② 프리헤더 (보완점 ①: 제목과 중복 안 되게) -->
+  <div class="preheader">맥미니 80→119만 원 인상… 월 1.3만 원으로 끝내는 법, 5분 설치부터 전부 공개합니다 👇</div>
+
+  <!-- 헤더 -->
+  <div class="head">
+    <div class="brand">스티브의 뉴스레터<small>Marketing Trueman Show · Marketor</small></div>
+    <div class="date">2026년 5월 11일 · 월요일</div>
+  </div>
+
+  <!-- ① 후크 제목 (부정 명령형 시그니처) -->
+  <div class="hook">
+    <h1>맥미니 119만 원, 안 사도 됩니다<span class="l2">VPS 한 대로 끝낸 24시간 클로드 코드</span></h1>
+  </div>
+  <span class="datelabel">📅 가격·버전 정보는 2026년 5월 기준</span>
+
+  <!-- ③ TL;DR (두괄식) -->
+  <div class="tldr">
+    한 줄로 요약하면 이렇습니다. <b>호스팅어 VPS에 클로드 코드를 깔고, 디스코드 봇만 연결하면 노트북을 닫아도 휴대폰 하나로 24시간 작동하는 개인 비서가 생깁니다.</b> 맥미니 119만 원, 안 사도 됩니다. 제가 직접 세팅해봤고, 오늘 <b>5분 설치부터 7단계 봇 연결까지 전부 공개</b>합니다.
+  </div>
+
+  <!-- ④ 목차 -->
+  <div class="toc">
+    <div><span class="n">❶</span>왜 다들 맥미니부터 고민할까</div>
+    <div><span class="n">❷</span>월 1.3만 원이 119만 원을 이기는 계산법</div>
+    <div><span class="n">❸</span>5분 설치 + 7단계 봇 연결</div>
+    <div><span class="n">❹</span>Before / After, 그리고 보안 한 줄</div>
+    <div class="note">* 12단계 전체 화면 시연은 하단 영상으로 확인할 수 있습니다.</div>
+  </div>
+
+  <!-- ⑤ 본문 -->
+  <section>
+    <h2><span class="n">❶</span> 왜 다들 맥미니부터 고민할까</h2>
+    <p>클로드 코드를 제대로 써본 분이라면 한 번쯤 부딪히는 순간이 있습니다. <b>노트북을 닫으면 작업이 멈춥니다.</b> 책상을 떠나면 끝이에요.</p>
+    <p>외부에서 휴대폰으로 호출하고 싶은데, 그러려면 컴퓨터 한 대를 24시간 켜둬야 합니다. 그래서 많은 분들이 같은 결론에 도착해요. "그냥 맥미니 한 대 사서 항상 켜둘까?"</p>
+    <p>문제는 가격입니다. 맥미니 M4 기본 모델이 <span class="num">119만 원</span>. 최근 80만 원대에서 <span class="num">30만 원 넘게</span> 올랐습니다. 거기에 책상 한 자리, 외부 접속 별도 세팅, 고장 나면 A/S까지. 한 번 사면 끝이 아니죠. 그래서 제가 찾은 답이 <b>VPS</b>입니다.</p>
+
+    <h2><span class="n">❷</span> 월 1.3만 원이 119만 원을 이기는 계산법</h2>
+    <p>VPS는 한마디로 <b>클라우드에 있는 컴퓨터 한 대를 빌리는 것</b>입니다. 24시간 켜져 있고, 어디서든 접속되고, 월 사용료만 내면 끝. 호텔 객실을 장기 임대한다고 생각하면 쉽습니다. 책상을 살 필요도, 청소할 필요도, 직접 고칠 필요도 없어요.</p>
+
+    <div class="cost">
+      <div class="c before"><div class="lab">맥미니 M4</div><div class="big">119만 원</div><div class="sm">일시불 · 공간 · A/S 본인</div></div>
+      <div class="c after"><div class="lab">호스팅어 VPS KVM 2</div><div class="big">월 1.3만 원</div><div class="sm">3년 누적 58만 원 (절반 이하)</div></div>
+    </div>
+
+    <p>단순히 싸기만 한 게 아닙니다. 하드웨어를 안 사니 <b>공간도 안 잡고, 고장 걱정도 없고, 어디서든 같은 환경에 접속</b>할 수 있어요. 오늘 만드는 시스템 흐름은 4단계입니다 — VPS 위에 클로드 코드를 올리고 → 채널 플러그인을 깔고 → 디스코드 봇을 연결하면 → 디스코드 메시지를 VPS의 클로드 코드가 받아서 답을 줍니다.</p>
+    <p>사전 준비는 둘. ① <b>Claude Pro 또는 Max</b> (무료 플랜은 작동 안 함), ② <b>호스팅어 VPS KVM 2</b> (쿠폰 <b>TRUMAN</b> 으로 10% 추가 할인).</p>
+    <span class="src">출처 · 마케팅 트루먼쇼</span>
+
+    <h2><span class="n">❸</span> 5분 설치 + 7단계 봇 연결</h2>
+    <p>호스팅어의 가장 큰 장점은 <b>브라우저 터미널</b>입니다. SSH 클라이언트를 따로 깔 필요 없이 대시보드 버튼 하나로 터미널이 열려요. VPS가 처음인 분에게 이 기능 하나가 진입 장벽을 통째로 없애줍니다. 핵심만 추리면 이렇습니다.</p>
+
+    <div class="steps">
+      <div class="t">⚙️ 클로드 코드 설치 — 5단계 (약 5분)</div>
+      <ul>
+        <li>공식 docs에서 <b>curl 한 줄</b> 복사 (2026.1부터 Node·npm 불필요)</li>
+        <li>브라우저 터미널에 붙여넣고 10초 대기</li>
+        <li>안내되는 <b>PATH export</b> 한 줄 추가</li>
+        <li><code>claude</code> 실행 → 다크모드 · 로그인 1번(Pro/Max) → Authorize·Copy·붙여넣기</li>
+        <li><code>claude doctor</code> 진단 + 폴더 신뢰 → 끝 (자격증명 저장됨)</li>
+      </ul>
+    </div>
+
+    <div class="steps">
+      <div class="t">🤖 디스코드 봇 연결 — 7단계</div>
+      <ul>
+        <li>Discord Developer Portal에서 앱 생성 + <b>Bot 토큰 발급</b> (외부 공유 금지)</li>
+        <li>Message Content Intent 활성화 → OAuth2로 봇을 내 서버에 초대</li>
+        <li>클로드 코드에서 <code>/plugin install discord@claude-plugins-official</code></li>
+        <li><code>/discord:configure &lt;token&gt;</code> 으로 토큰 등록</li>
+        <li class="key">⚠️ <code>claude --channels …</code> 옵션으로 <b>반드시 재시작</b> — 여기를 빼먹어 "왜 응답을 안 하지?"로 30분 날리는 분이 정말 많습니다</li>
+        <li>봇에게 DM → 받은 <b>페어링 코드</b>를 <code>/discord:access pair &lt;code&gt;</code></li>
+        <li><code>/discord:access policy allowlist</code> 로 본인만 호출 가능하게 잠금</li>
+      </ul>
+    </div>
+
+    <p>세팅이 끝났다면 봇에게 "작업 가능한 기능 알려줘"라고 보내보세요. 파일 읽기·명령 실행·도커 관리·깃허브 연결까지 다 된다고 답이 옵니다. <b>휴대폰 한 대로 24시간 작동하는 비서</b>가 진짜로 완성되는 순간이에요.</p>
+
+    <h2><span class="n">❹</span> Before / After, 그리고 보안 한 줄</h2>
+    <div class="cost">
+      <div class="c before"><div class="lab">Before · 맥미니</div><div class="big" style="font-size:15px;color:#b91c1c">119만 일시불</div><div class="sm">책상 자리 + 외부접속 세팅 + 직접 A/S</div></div>
+      <div class="c after"><div class="lab">After · VPS</div><div class="big" style="font-size:15px">월 1.3만</div><div class="sm">접속 = 디스코드 한 통 · 고장은 호스팅어</div></div>
+    </div>
+    <div class="warn">
+      🔐 <b>보안 한 줄.</b> 봇 토큰이 유출되면 누군가 내 권한으로 활동할 수 있고, allowlist를 안 잠그면 서버의 누구든 내 클로드 코드를 호출할 수 있습니다. <b>토큰은 공유 금지, allowlist는 무조건 설정.</b> 이 둘만 지켜도 큰 사고는 막습니다.
+    </div>
+    <p>추천 대상은 명확합니다. 클로드 코드를 24시간 돌리고 싶지만 맥미니가 부담인 분, 노트북을 닫으면 작업이 멈춰 불편했던 분, 외부에서 휴대폰으로 호출하고 싶은 분, SSH 세팅이 막막했던 분이라면 — 오늘 구조가 가장 빠른 답입니다.</p>
+  </section>
+
+  <!-- ⑥ 핵심 요약 -->
+  <div class="summary">
+    <h3>📌 핵심 요약</h3>
+    <p><b>Step 1.</b> 호스팅어 VPS KVM 2 준비(쿠폰 TRUMAN 10% 할인) → 브라우저 터미널에서 curl 한 줄로 클로드 코드 설치. Node·npm 사전 설치 불필요.</p>
+    <p><b>Step 2.</b> 디스코드 봇 생성 → 채널 플러그인 설치 → <b>--channels 옵션으로 반드시 재시작</b>. 봇 무응답 99%의 원인이 이 한 단계.</p>
+    <p><b>Step 3.</b> 페어링 코드로 연결 → allowlist로 본인 외 접근 잠금. 비용은 맥미니의 절반 이하, 책상 자리 0, 휴대폰 하나로 24시간 비서 완성.</p>
+  </div>
+
+  <!-- ⑦-A 1차 CTA (단일·강조) -->
+  <div class="cta1">
+    <div class="lead">VPS 한 대로 클로드 봇 세팅,<br>화면 보며 그대로 따라하고 싶다면 👇</div>
+    <a href="https://hostinger.com/TRUMAN">클로드봇 세팅 영상 보러가기</a>
+    <div class="coupon">호스팅어 VPS 10% 할인 쿠폰 · <b>TRUMAN</b></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑦-B 2차 CTA (분리) -->
+  <div class="cta2">
+    <div class="q">🤔 마케터를 위한 클로드코드 교육이 왜 없을까?</div>
+    <p>대학내일 마케팅팀에서 시작해 뷰티브랜드 파트장, 그리고 애플코리아까지. 온·오프라인을 오가며 쌓은 마케팅 경험을 AI로 극대화하는 교육을 직접 만들었습니다.</p>
+    <a href="#">마케터를 위한 AI 교육 보러가기 →</a>
+  </div>
+
+  <!-- 푸터 -->
+  <div class="foot">
+    <b>Marketing Trueman Show | Marketor</b><br>
+    steve@wmbb.kr<br>
+    수신거부 Unsubscribe · 웹에서 보기 · 공유하기
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "core_message": "신학기 모공 케어 토너 출시, 21일 챌린지와 함께",
+  "channel": "Meta",
+  "goal": "conversion",
+  "character_limits": {
+    "headline": 25,
+    "body": 90
+  },
+  "patterns_10": [
+    "Problem-Agitate-Solve",
+    "데이터 헤드라인",
+    "호기심 갭",
+    "FOMO (한정·마감)",
+    "사회적 증거 (리뷰·판매량)",
+    "타겟 호명 (지성 피부인 분들)",
+    "혜택 중심",
+    "명령형 CTA",
+    "권위 (임상·전문가)",
+    "역설·반전"
+  ],
+  "reference": "4-3 광고 레퍼런스 카탈로그의 패턴 인사이트 (수치 증명형 강세 · 챌린지 CTA 급증) 를 생성 시 참조",
+  "google_sheets": {
+    "spreadsheet_name": "광고 카피 A/B",
+    "columns": ["패턴", "헤드라인", "본문", "평균 점수", "명확성", "타겟", "차별성", "CTA", "브랜드 일관성", "규제 안전성"]
+  }
+}

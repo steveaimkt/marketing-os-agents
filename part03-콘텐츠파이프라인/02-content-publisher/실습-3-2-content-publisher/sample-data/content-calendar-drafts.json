@@ -1,0 +1,46 @@
+{
+  "notion_db_name": "콘텐츠 캘린더",
+  "notion_db_schema": {
+    "콘텐츠 제목": "title",
+    "발행일": "date",
+    "채널": "multi_select: Instagram | Facebook | X | LinkedIn | TikTok | Blog",
+    "상태": "select: Draft | Scheduled | Published",
+    "Buffer URL": "url",
+    "이미지 URL": "url"
+  },
+  "brand_context": {
+    "brand": "결로아 (Gyeolloa)",
+    "product": "결로아 포어 토너 V2 (TONER-V2)",
+    "campaign": "21일 모공 챌린지"
+  },
+  "rows": [
+    {
+      "콘텐츠 제목": "포어 토너 V2 론칭 캐러셀 : 모공이 달라지는 3단계",
+      "원본 초안": "신제품 포어 토너 V2가 출시되었습니다. PHA 5% + 어성초 추출물로 각질과 유분을 부드럽게 정리합니다. 1단계 세안 후 토너 패드로 결 정리, 2단계 손바닥으로 흡수, 3단계 수분크림 마무리. 저자극 테스트 완료, 민감성 피부도 매일 사용 가능합니다.",
+      "발행일": "+1d",
+      "채널": ["Instagram", "Facebook", "X"],
+      "상태": "Draft",
+      "이미지 URL": "https://example-cdn.gyeolloa.kr/toner-v2-carousel-01.jpg"
+    },
+    {
+      "콘텐츠 제목": "21일 모공 챌린지 참여 안내 : 인증하면 정품 증정",
+      "원본 초안": "6월 21일부터 21일간, 매일 아침 토너 루틴을 인증하면 추첨을 통해 포어 토너 V2 정품을 드립니다. 참여 방법: 1) 계정 팔로우 2) 루틴 사진 업로드 3) 해시태그 #21일모공챌린지 #결로아. 완주자 전원 10% 할인 쿠폰.",
+      "발행일": "+2d",
+      "채널": ["Instagram", "X", "TikTok"],
+      "상태": "Draft",
+      "이미지 URL": "https://example-cdn.gyeolloa.kr/challenge-21d-poster.jpg"
+    },
+    {
+      "콘텐츠 제목": "성분 이야기 : PHA가 모공 케어에 적합한 이유",
+      "원본 초안": "AHA보다 분자가 커서 천천히 침투하는 PHA는 자극이 적으면서 각질 정리에 효과적입니다. 결로아 포어 토너 V2는 PHA 5%에 진정 성분 어성초를 더해 데일리 사용 기준을 맞췄습니다. 성분표 전체와 임상 결과는 블로그에서 확인하세요.",
+      "발행일": "+3d",
+      "채널": ["LinkedIn", "Blog", "Facebook"],
+      "상태": "Draft",
+      "이미지 URL": "https://example-cdn.gyeolloa.kr/ingredient-pha-infographic.jpg"
+    }
+  ],
+  "duplicate_demo_row": {
+    "콘텐츠 제목": "포어 토너 V2 론칭 캐러셀 : 모공이 달라지는 3단계",
+    "비고": "중복 검출 시연용. 이 행을 7일 이내 Published 상태로 1건 추가 시딩하면 에이전트가 중복 경고를 발생시킨다."
+  }
+}

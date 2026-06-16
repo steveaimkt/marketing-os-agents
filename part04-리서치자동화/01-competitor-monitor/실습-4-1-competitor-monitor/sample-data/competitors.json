@@ -1,0 +1,35 @@
+{
+  "notion_db_name": "경쟁사 목록",
+  "notion_db_schema": {
+    "브랜드명": "title",
+    "도메인": "url",
+    "인스타그램": "rich_text",
+    "광고 라이브러리 URL": "url",
+    "카테고리": "select: 토너 | 세럼 | 클렌저"
+  },
+  "rows": [
+    {
+      "브랜드명": "MEDICUBE",
+      "도메인": "https://medicube.co.kr",
+      "인스타그램": "@medicube_kr",
+      "광고 라이브러리 URL": "https://www.facebook.com/ads/library/?q=medicube",
+      "카테고리": "토너"
+    },
+    {
+      "브랜드명": "TORRIDEN",
+      "도메인": "https://torriden.com",
+      "인스타그램": "@torriden_official",
+      "광고 라이브러리 URL": "https://www.facebook.com/ads/library/?q=torriden",
+      "카테고리": "세럼"
+    },
+    {
+      "브랜드명": "NUMBUZIN",
+      "도메인": "https://numbuzin.com",
+      "인스타그램": "@numbuzin_kr",
+      "광고 라이브러리 URL": "https://www.facebook.com/ads/library/?q=numbuzin",
+      "카테고리": "토너"
+    }
+  ],
+  "snapshot_archive_db_name": "경쟁사 스냅샷 아카이브",
+  "change_categories": ["신제품", "가격", "카피", "이벤트", "비주얼"]
+}
