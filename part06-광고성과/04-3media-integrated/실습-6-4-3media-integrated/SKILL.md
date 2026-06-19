@@ -5,7 +5,8 @@ description: |
   ① 소개 (하는 일 + 연결 소스) → ② 실행 (작동 구조 + 데이터 준비 + 실제 실행) →
   ③ 활용 (내 업무에 적용하는 방법).
   흐름 : ① 소개 ② 실행 ③ 활용. 자동 실행 금지. 단계마다 답 받고 다음.
-  선행 6-1~6-3 결과를 픽스처로 내장해 단독 촬영이 가능하다.
+  입력 우선순위 : 선행 6-1~6-3 의 실제 산출물(outputs/{날짜}/…)을 먼저 쓰고,
+  없으면 04 내장 픽스처로 폴백해 단독 촬영도 가능하다.
   에이전트가 에이전트 3개를 호출하는 상위 오케스트레이션 구조가 학습 핵심.
 
   자동 호출 트리거:
@@ -70,22 +71,29 @@ description: |
 ### 2-0 사전 점검
 
 ```bash
+# 리포트 템플릿 · webhook
 test -f "skills/html-report-template/SKILL.md" && echo "리포트 템플릿 ✅"
 test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
+
+# 선행 6-1~6-3 라이브 산출물 탐색 (있으면 이것을 통합 기준으로 사용)
+ls outputs/*/meta-roas-*.html 2>/dev/null && echo "6-1 Meta 산출물 ✅"
+ls outputs/*/google-ads-analyzer/google-ads-keyword-*.html 2>/dev/null && echo "6-2 Google 산출물 ✅"
+ls outputs/*/naver-ads-analyzer/*.html 2>/dev/null && echo "6-3 Naver 산출물 ✅"
 ```
 
 ```
-🔧 6-4 의존 항목 점검 결과
+🔧 6-4 의존 항목 점검 결과   (입력 우선순위 : 라이브 산출물 → 없으면 픽스처)
 
-  | # | 항목 | 용도 | 상태 | 해결 |
+  | # | 항목 | 용도 | 상태 | 입력 경로 (우선 → 폴백) |
   |---|---|---|---|---|
-  | ① | 6-1 Meta 결과    | 통합 입력 | {✅ 실습 산출물 / 픽스처} | sample-data 내장 |
-  | ② | 6-2 Google 결과  | 통합 입력 | {✅ / 픽스처} | sample-data 내장 |
-  | ③ | 6-3 Naver 결과   | 통합 입력 | 픽스처 (샘플 전용) | sample-data 내장 |
+  | ① | 6-1 Meta 결과    | 통합 입력 | {✅ 산출물 / 픽스처} | outputs/{날짜}/meta-roas-{날짜}.html → sample-data/meta-ads-performance.json |
+  | ② | 6-2 Google 결과  | 통합 입력 | {✅ 산출물 / 픽스처} | outputs/{날짜}/google-ads-analyzer/google-ads-keyword-{날짜}.html → sample-data/google-ads-performance.json |
+  | ③ | 6-3 Naver 결과   | 통합 입력 | {✅ 산출물 / 픽스처} | outputs/{날짜}/naver-ads-analyzer/ → sample-data/naver-ads-performance.json |
   | ④ | html-report-template | 리포트 디자인 | {✅ / ❌} | 0분 |
   | ⑤ | Notion · webhook | 아카이브 + 알림 | {✅ / ❌} | 1~10분 |
 
-  6-1~6-3 을 안 했어도 픽스처 3종이 내장되어 단독 촬영 가능.
+  선행 6-1~6-3 산출물이 있으면 그 결과를 그대로 통합 입력으로 사용한다 (사용자 기준).
+  6-1~6-3 을 안 했거나 산출물이 없으면 내장 픽스처 3종으로 폴백 → 단독 촬영 가능.
   실전 모드 : 6-1~6-3 에이전트를 병렬 호출 (& + wait) 해 라이브 결과로 통합.
 ```
 
@@ -109,9 +117,20 @@ test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
   ② 병렬 실행 패턴 : 순차가 아니라 동시에 (& + wait) · 시간 1/3
   ③ 재배분 "제안" 형식 : 현재 vs 제안 비율 + 근거 + 예상 효과, 실행 버튼은 없음
 
-### 2-2 데이터 준비 (3매체 픽스처)
+### 2-2 데이터 준비 (3매체 입력 — 라이브 산출물 우선)
 
-`sample-data/` 3종 로드 + 매체별 핵심 숫자 미리보기:
+입력 우선순위 : **① 선행 6-1~6-3 의 실제 산출물 → ② 04 내장 픽스처(폴백)**
+
+```
+  · 6-1 Meta   : outputs/{날짜}/meta-roas-{날짜}.html
+                 (없으면 sample-data/meta-ads-performance.json)
+  · 6-2 Google : outputs/{날짜}/google-ads-analyzer/google-ads-keyword-{날짜}.html
+                 (없으면 sample-data/google-ads-performance.json)
+  · 6-3 Naver  : outputs/{날짜}/naver-ads-analyzer/
+                 (없으면 sample-data/naver-ads-performance.json)
+```
+
+로드 후 매체별 핵심 숫자 미리보기:
 
 ```
 📥 3매체 결과 (7일 · 동일 기간 2026-06-04 ~ 06-10)
@@ -125,7 +144,7 @@ test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
 ```
 ▶ 워크플로 단계별 실행:
 
-  1. 3매체 결과 수집 (픽스처 로드 또는 병렬 호출)
+  1. 3매체 결과 수집 (선행 6-1~6-3 산출물 우선 → 없으면 픽스처 → 실전은 병렬 호출)
   2. 섹션 1 매체 비교표                     → 동일 잣대 정렬 (시연 하이라이트)
        매체 간 ROAS 직접 비교 시 주의 주석 : 매체별 기여 모델 차이
   3. 섹션 2 인사이트 5줄                    → 예:
