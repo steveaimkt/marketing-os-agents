@@ -38,6 +38,18 @@ test -f ".mcp.json" && echo ".mcp.json ✅" || echo ".mcp.json ❌ → marketing
 
 ---
 
+## Step 0-먼저. 프로젝트 폴더 정하고 그 안으로 이동 ⭐ (모든 Step의 기준점)
+
+`--channels` 세션은 **켜는 순간의 현재 폴더**를 프로젝트로 삼아 `agents/`·`CLAUDE.md`·`.mcp.json`을 로드한다.
+그래서 아래 Step 0(clone·복사·orchestrator)과 Step 3(`--channels`)은 **전부 같은 폴더 안에서** 실행해야 한다.
+
+```bash
+cd ~/marketing-os     # 팀을 모을 내 프로젝트 폴더 (없으면: mkdir -p ~/marketing-os && cd ~/marketing-os)
+pwd                   # 지금 이 폴더가 맞는지 확인 — 이후 모든 명령을 여기서 실행
+```
+> ⚠️ 아래 Step 0의 `mkdir -p agents`·`agents/…` 는 전부 **상대경로**다. 엉뚱한 폴더에서 실행하면
+>    팀이 엉뚱한 곳에 생겨 Step 3 세션이 팀을 못 찾는다 → 반드시 여기서 폴더를 고정하고 시작.
+
 ## Step 0. GitHub에서 에이전트 팀 가져오기 ⭐ (핵심 관문)
 
 저장소엔 클립별 `agent.md` 조각만 있고 **① agents/ 폴더 ② orchestrator.md(라우팅 두뇌)** 는 없다. 여기서 만든다.
@@ -83,10 +95,15 @@ ls agents/    # → email-newsletter.md, content-publisher.md, … 확인
 
 ## Step 3. `--channels` 로 세션 재시작 ⭐ 가장 중요
 ```bash
-# 반드시 Step 0에서 팀을 모은 프로젝트 폴더(agents/·CLAUDE.md 있는 곳)에서
+# ① 켜기 전 자기검증 — 지금 폴더가 맞는지 + 팀·두뇌·연결이 다 있는지 (셋 다 있어야 세션에 딸려온다)
+pwd
+ls agents/orchestrator.md CLAUDE.md .mcp.json   # 하나라도 "No such file" 뜨면 폴더가 틀렸거나 Step 0 미완
+
+# ② 반드시 위에서 확인한 그 프로젝트 폴더에서 세션을 켠다
 claude --channels plugin:discord@claude-plugins-official
 # → 이걸 안 하면 봇이 절대 응답 안 함. 성공 시 디스코드에서 봇 🟢 온라인
 ```
+> 💡 이미 세션이 켜져 있는데 Step 0으로 `agents/`를 나중에 채웠다면 → **세션을 껐다 이 폴더에서 다시 켜야** 반영된다.
 
 ## Step 4. 페어링 + 잠금
 ```
