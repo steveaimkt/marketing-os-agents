@@ -93,19 +93,53 @@ ls agents/    # → email-newsletter.md, content-publisher.md, … 확인
 /discord:configure <복사한 토큰>      # ~/.claude/channels/discord/.env 에 저장
 ```
 
-## Step 3. `--channels` 로 세션 재시작 ⭐ 가장 중요
-```bash
-# ① 켜기 전 자기검증 — 지금 폴더가 맞는지 + 팀·두뇌·연결이 다 있는지 (셋 다 있어야 세션에 딸려온다)
-pwd
-ls agents/orchestrator.md CLAUDE.md .mcp.json   # 하나라도 "No such file" 뜨면 폴더가 틀렸거나 Step 0 미완
+## Step 3. 이 폴더에서 클로드 채널(디스코드) 연결 ⭐ 가장 많이 막히는 구간
 
-# ② 반드시 위에서 확인한 그 프로젝트 폴더에서 세션을 켠다
-claude --channels plugin:discord@claude-plugins-official
-# → 이걸 안 하면 봇이 절대 응답 안 함. 성공 시 디스코드에서 봇 🟢 온라인
+> **하는 일 한 문장** : "터미널에서, 이 프로젝트 폴더에 서서, `--channels` 옵션을 붙여 클로드를 새로 켠다."
+> 그러면 그 세션이 ⓐ 디스코드 봇과 연결되고 + ⓑ 이 폴더의 팀(`agents/`·`orchestrator`·`CLAUDE.md`)을 자동 로드한다.
+
+🧩 **가장 흔한 혼동 — 이건 슬래시 명령이 아니다**
 ```
-> 💡 이미 세션이 켜져 있는데 Step 0으로 `agents/`를 나중에 채웠다면 → **세션을 껐다 이 폴더에서 다시 켜야** 반영된다.
+  · Step 2의 /plugin · /discord:configure  → 클로드 "안"에서 치는 슬래시 명령
+  · Step 3의 claude --channels …           → 클로드 "밖"(터미널 셸)에서 치는 실행 명령
+  → 지금 클로드 세션 안에 있다면 먼저 밖으로 나와야 한다.
+```
 
-## Step 4. 페어링 + 잠금
+**3-1. (클로드 안이라면) 세션에서 빠져나오기**
+- 클로드 프롬프트에서 `/exit` 입력 (또는 `Ctrl+D`) → 터미널 셸(`%` 또는 `$` 프롬프트)로 돌아온다.
+- 터미널을 아직 안 열었으면: **macOS 터미널 앱** 또는 **VS Code 하단 터미널**(단축키 `⌃``)을 연다.
+
+**3-2. 이 프로젝트 폴더로 이동 + 최종 확인**
+```bash
+cd ~/marketing-os          # Step 0-먼저에서 정한 바로 그 폴더
+pwd                        # 이 폴더가 맞는지 눈으로 확인
+ls agents/orchestrator.md CLAUDE.md .mcp.json
+# → 셋 다 이름이 그대로 출력되면 준비 완료.
+#   "No such file" 이 뜨면 폴더가 틀렸거나 Step 0 미완 → 여기서 멈추고 폴더·Step 0 부터 다시.
+```
+
+**3-3. `--channels` 붙여 클로드를 다시 켜기 ★ 핵심 한 줄**
+```bash
+claude --channels plugin:discord@claude-plugins-official
+```
+- `--channels` = "이 세션을 디스코드 채널에 연결해서 켜라" 는 뜻.
+- 이 옵션 없이 그냥 `claude` 로 켜면 → **봇은 영원히 응답하지 않는다.** (가장 흔한 실패 원인)
+
+**3-4. 연결됐는지 확인 — 두 곳을 본다**
+```
+  ① 터미널  : 평소처럼 클로드 세션이 열린다 (= 채널 연결된 세션).
+  ② 디스코드 : 서버 멤버 목록에서 내 봇 옆 점이  회색 → 🟢 초록  으로 바뀐다.  ← "연결 성공" 신호
+```
+- 🟢 초록이 안 되면 → 대개 **Message Content Intent(Step 1-②) OFF** 또는 **토큰 미등록(Step 2)**. 아래 트러블슈팅 참조.
+
+**3-5. 이 세션은 "켜 둔 채로" 둔다**
+- ⚠️ 이 터미널 창을 닫거나 노트북을 종료하면 **봇도 함께 꺼진다(오프라인)**. 팀이 상시로 쓰려면 계속 켜 둬야 한다.
+- macOS 잠자기 방지(선택): 다른 터미널 탭에서 `caffeinate -dis` 를 실행해 두면 이 세션 도는 동안 노트북이 안 잔다.
+- 👉 다음 Step 4의 슬래시 명령은 **바로 이 방금 켠 `--channels` 세션 안에서** 친다.
+
+> 💡 이미 세션을 켠 뒤 `agents/`를 나중에 채웠다면 → 켜진 세션엔 반영 안 됨. **`/exit` 후 이 폴더에서 다시 켜야** 팀이 딸려온다.
+
+## Step 4. 페어링 + 잠금 (방금 켠 `--channels` 세션 안에서)
 ```
 # (폰) 봇에게 DM → 페어링 코드 수신 (예: ABCD-1234)
 /discord:access pair ABCD-1234        # 내 계정을 allowlist 에 추가
