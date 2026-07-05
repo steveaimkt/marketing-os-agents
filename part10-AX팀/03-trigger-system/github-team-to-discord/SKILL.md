@@ -1,17 +1,44 @@
-# 실습 10-3 — 대단원: 에이전트 팀을 디스코드(클로드 채널)로 연결
+---
+name: github-team-to-discord
+description: |
+  GitHub의 에이전트 팀(marketing-os-agents)을 내 프로젝트로 가져와 디스코드(클로드 채널)에 연결하는 실행형 스킬.
+  실습.md 손 따라하기 가이드를 그대로 옮긴 실전 런북 — 강의 시연이 아니라 "실제로 내 환경에서" 연결한다.
+  Step 0(GitHub clone → agents/ 구성 → orchestrator.md 생성 → CLAUDE.md 확인) → Step 1~4(봇 생성·플러그인·--channels·페어링) → Step 5(팀 확장).
+  ⚠️ git clone·파일 복사·봇 토큰·세션·allowlist 등 실제 시스템을 바꾸므로 각 Step은 사용자 승인 후 실행. 자동 실행 금지.
+
+  자동 호출 트리거:
+  - **"GitHub 팀 디스코드 연결"** ⭐ 주요 트리거
+  - "깃허브 에이전트 가져와서 디스코드 연결" / "marketing-os-agents 디스코드 연동"
+  - "내 프로젝트에 에이전트 팀 세팅" / "GitHub 팀 clone 해서 봇 붙여줘"
+  - "에이전트 팀 디스코드 창구 만들기"
+
+  관계: 강의 시연판은 "10-3 실습 시작"(실습-10-3-trigger-system). 이 스킬은 같은 흐름의 실전 실행판.
+  기준 문서: curriculum/part10-AX팀/에이전트팀-디스코드-팀연동-가이드.md
+---
+
+# GitHub 에이전트 팀 → 디스코드(클로드 채널) 연결 (실전 런북)
 
 > GitHub에 흩어진 에이전트 팀(30개)을 → 내 프로젝트로 모으고 → 디스코드 채널 하나로 → 나뿐 아니라 팀원도 폰에서 함께 부르게 만든다.
-> 인터랙티브 실행은 **"GitHub 팀 디스코드 연결"** 로 [`github-team-to-discord/SKILL.md`](github-team-to-discord/SKILL.md) 를 사용. 아래는 손으로 따라가는 요약판.
-> 📄 기준 문서: [`에이전트팀-디스코드-팀연동-가이드.md`](../에이전트팀-디스코드-팀연동-가이드.md)
+> 📄 기준 문서: `curriculum/part10-AX팀/에이전트팀-디스코드-팀연동-가이드.md`
+> 🎬 강의 시연이 목적이면 "10-3 실습 시작"(실습-10-3-trigger-system) 스킬을 대신 사용.
 
-## 사전 조건
-- `git` · `claude ≥ 2.1.80` · `bun` 설치
-- `.mcp.json` 준비 (없으면 [marketing-os-mcp-setup](https://github.com/steveaimkt/marketing-os-mcp-setup) 선행)
+## 실행 원칙 (스킬이 지킬 것)
+- ⛔ **자동 실행 금지.** 각 Step은 명령을 보여주고 **사용자 승인을 받은 뒤에만** 실행한다.
+- 🔐 봇 토큰은 화면·채팅에 출력하지 않는다. 사용자가 직접 `/discord:configure` 에 붙여넣게 안내.
+- 📂 현재 작업 폴더가 팀을 모을 프로젝트 폴더인지 먼저 확인한다 (`--channels` 세션은 이 폴더에서 켠다).
+
+## 사전 조건 (먼저 점검)
+```bash
+git --version                   # Step 0 clone 에 필요
+claude --version                # ≥ 2.1.80
+bun --version                   # 채널 플러그인 = Bun 스크립트 → 필수
+test -f ".mcp.json" && echo ".mcp.json ✅" || echo ".mcp.json ❌ → marketing-os-mcp-setup 선행"
+```
 - 인증: claude.ai(Pro/Max/Team) 또는 Console API 키 (Bedrock/Vertex/Foundry는 채널 불가)
 
 ---
 
-## Step 0. GitHub에서 에이전트 팀 가져오기 ⭐ (이번 클립의 핵심 관문)
+## Step 0. GitHub에서 에이전트 팀 가져오기 ⭐ (핵심 관문)
 
 저장소엔 클립별 `agent.md` 조각만 있고 **① agents/ 폴더 ② orchestrator.md(라우팅 두뇌)** 는 없다. 여기서 만든다.
 
@@ -27,18 +54,20 @@ find /tmp/mos-agents -name agent.md | while read f; do
   cp "$f" "agents/${name}.md"
 done
 ls agents/    # → email-newsletter.md, content-publisher.md, … 확인
+```
 
+```
 # ⓒ orchestrator.md (라우팅 두뇌) 생성 — 저장소엔 없으므로 여기서
-claude "agents/ 의 에이전트 목록을 읽고, '요청 유형 → 담당 에이전트' 라우팅 표와
-        승인 게이트(조회=자동 / 발행=승인 / 삭제·예산=금지)를 담은 agents/orchestrator.md 를 작성해줘."
+   agents/ 의 에이전트 목록을 읽고, "요청 유형 → 담당 에이전트" 라우팅 표 +
+   승인 게이트(조회=자동 / 발행=승인 / 삭제·예산=금지)를 담은 agents/orchestrator.md 를 작성.
+   (마케팅 OS 헌법의 오케스트레이터 원칙: 입구 1개 · 두뇌 1개)
 
 # ⓓ CLAUDE.md 확인 (없으면 정체성·라우팅 규칙 최소 골격 생성)
-test -f CLAUDE.md && echo "CLAUDE.md ✅" || echo "→ CLAUDE.md 생성 필요"
+   test -f CLAUDE.md && echo "CLAUDE.md ✅" || echo "→ CLAUDE.md 생성 필요"
 ```
 
 > ✅ Step 0가 끝나면 "GitHub의 흩어진 조각"이 "내 프로젝트 폴더 안의 한 팀 + 두뇌"가 된다.
-
----
+⏸ agents/ + orchestrator.md 확인 후 Step 1로.
 
 ## Step 1. 디스코드 봇 만들기 + 초대
 1. https://discord.com/developers/applications → **New Application** → **Bot** → **Reset Token** 복사 (⚠️ 1번만 보임 · 채팅에 붙여넣지 말 것)
@@ -77,7 +106,7 @@ claude --channels plugin:discord@claude-plugins-official
 
 ---
 
-## 예상 결과 (완성 후 · 폰 라이브)
+## 완료 확인 (폰 라이브)
 ```
 📱 마케터A: "@봇 지난주 메타 광고 ROAS 뽑아줘"
 📱 마케터B: "@봇 경쟁사 신규 영상 정리해줘"
@@ -85,14 +114,13 @@ claude --channels plugin:discord@claude-plugins-official
    오케스트레이터가 meta-ads-analyzer / competitor-monitor 로 라우팅 → 결과가 각자 폰에 도착
 ```
 
-## 🎉 강의 종료 체크리스트 (대단원 완주)
+## ✅ 체크리스트
 - [ ] GitHub 팀 가져오기 완료 — agents/ 30개 + orchestrator.md + CLAUDE.md
-- [ ] 12개 MCP 연결(marketing-os-mcp-setup) + 5개 스킬 작동
+- [ ] 12개 MCP 연결(marketing-os-mcp-setup) + 스킬 작동
 - [ ] 디스코드 봇 🟢 온라인 (`--channels` 세션이 프로젝트 폴더에서 가동)
 - [ ] 내 계정 페어링 + `policy allowlist` 잠금
 - [ ] 팀원 1명 이상 allowlist 추가 → 폰에서 "@봇 요청" → 결과 도착
 - [ ] 채널 멘션 정책 설정 (공용 채널 requireMention: true)
-- [ ] 팀 공용 보안 3대(단일세션·권한릴레이·호스팅) 이해 + OPERATIONS.md 작성
 
 ## 트러블슈팅
 
@@ -104,10 +132,8 @@ claude --channels plugin:discord@claude-plugins-official
 | 엉뚱한 폴더 에이전트 호출 | 세션을 다른 폴더에서 켬 | **팀을 모은 프로젝트 폴더에서** `--channels` 실행 |
 | 정기작업이 안 돎 | iCloud 경로 cron 실패 | 정기 작업은 클라우드 루틴으로 이전 |
 
-## 학습 후 운영 팁
+## 운영 팁
 1. **첫 2주**: 팀 요청 결과에 ✅/❌ reaction 으로 품질 점검(신뢰 쌓기)
 2. **3주~**: 신뢰가 쌓인 작업(FAQ 응대 등)부터 일부 자동 발송 허용
 3. **분기마다**: `brand-guidelines` 재실행 + `git pull` 로 팀 최신화
 4. **연 1회**: `marketing-calendar-builder` 로 다음 해 계획
-
-→ 운영 사례를 노션에 기록해두면 다음 분기 보고서가 더 정확해집니다.
