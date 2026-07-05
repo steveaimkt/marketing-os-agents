@@ -33,10 +33,12 @@
 
 이 대단원 실습은 "명령어로 트리거를 거는 것"에서 한 걸음 더 나아가, **내가 만든 에이전트 팀(30개)을 디스코드 채널 하나로 꺼내 — 나뿐 아니라 팀원도 폰에서 함께** 부르게 만드는 것을 시연합니다. (기준 문서: [`에이전트팀-디스코드-팀연동-가이드.md`](../에이전트팀-디스코드-팀연동-가이드.md))
 
-실행은 전용 스킬로 진행합니다. **"GitHub 팀 디스코드 연결"** 이라고 입력하면
-[github-team-to-discord/SKILL.md](github-team-to-discord/SKILL.md) 의 흐름이 시작됩니다:
-Step 0 (GitHub clone → agents/ 구성 → orchestrator.md 생성 → CLAUDE.md 확인) →
-Step 1~4 (봇 생성·플러그인·`--channels` 세션·페어링/잠금) →
-Step 5 (팀원 allowlist 확장 → 폰 라이브 도착).
+실행은 전용 스킬로 진행합니다. **"이 폴더에 (저장소) 에이전트 세팅하고 클로드 채널 연동하자"** 라고 말하면
+[github-team-to-discord/SKILL.md](github-team-to-discord/SKILL.md) 의 4-Part 흐름이 시작됩니다:
+Part 1 (clone → agents/ 로 팀 모으기) →
+**Part 2 (오케스트레이션 에이전트 가이드 문서 `orchestrator.md` 구축 ⭐ 핵심)** →
+Part 3 (클로드 채널 연동 — 방법은 기존과 동일, "그 폴더만 지정") →
+Part 4 (폰에서 요청 → 라우팅 → 회신 시연).
 
+채널 연동 자체는 `discord-channels-setup` 과 동일하며, 이 스킬의 핵심 산출물은 **팀을 지휘하는 orchestrator.md 가이드 문서**입니다.
 손으로 따라가는 요약판은 [`실습.md`](실습.md) 를, 팀 공용 보안·운영 함의는 기준 문서를 참조하세요.
