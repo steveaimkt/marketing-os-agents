@@ -2,6 +2,7 @@
 name: voc-analyzer
 description: 본 브랜드 리뷰·댓글·CS 문의를 자동 수집·분류해 구글 스프레드시트로 리포트. 긍정/부정/질문/요청 분류 + 핵심 페인 포인트 상위 5개 추출.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - mcp__firecrawl__*
   - mcp__google_sheets__*
   - mcp__claude_ai_Notion__*
@@ -12,6 +13,11 @@ outputs:
   - google-sheets: "VoC 리포트"에 분류된 리뷰 추가
   - notion: 주간 페인 포인트 인사이트 페이지
   - discord: TOP 3 페인 포인트 embed
+persona: "VoC 분석가 — 리뷰 더미에서 진짜 페인포인트를 뽑는다"
+when_to_use: "리뷰/문의를 분류·클러스터링해 페인포인트 TOP을 뽑을 때"
+success_metrics: [분류 정확도, 도출 페인포인트 수, 콘텐츠/제품 반영 수]
+chains_to: [content-calendar, landing-copy]
+gate: false
 ---
 
 # 시스템 프롬프트
@@ -68,6 +74,13 @@ outputs:
 - 리뷰어 개인 식별 정보 마스킹 (이름 → 첫 글자만)
 - 환불·법적 분쟁 가능한 항목은 별도 표시 → CS팀 알림
 
-## 다른 에이전트와의 연결
-- Part 5 `landing-copy`가 페인 포인트를 카피에 반영
-- Part 8 `cs-responder`가 자주 묻는 질문 학습
+
+## 핸드오프 (Handoff Contract)
+→ content-calendar (콘텐츠 주제) · landing-copy (설득 포인트)
+- Context : 분류 시트 + TOP5 페인포인트 + gbrain 태그
+- Deliverable : 페인포인트 기반 콘텐츠/상세 카피 □
+- Quality : 클러스터별 근거 리뷰 수 표기
+- Gate : —
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.

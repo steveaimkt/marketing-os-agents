@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google Ads 검색 캠페인 진단 — 2026-06-18</title>
+  <style>
+    :root{--bg:#fff;--fg:#16181d;--muted:#6b7280;--line:#e5e7eb;--card:#f8fafc;
+      --up:#0a7c3a;--down:#c0392b;--accent:#1a73e8;--warn:#b7791f;
+      --g-blue:#4285f4;--g-red:#ea4335;--g-yellow:#fbbc04;--g-green:#34a853;
+      --bar1:#1a73e8;--bar2:#9bc0f0;--rev:#0a7c3a;--spend:#9aa3af;--danger-bg:rgba(234,67,53,.08)}
+    @media (prefers-color-scheme:dark){
+      :root{--bg:#15171c;--fg:#e8eaed;--muted:#9aa0a6;--line:#2a2d34;--card:#1c1f26;
+        --up:#34d399;--down:#f87171;--accent:#4a9bff;--warn:#e3b341;
+        --g-blue:#669df6;--g-red:#f28b82;--g-yellow:#fdd663;--g-green:#5bb974;
+        --bar1:#4a9bff;--bar2:#37506f;--rev:#34d399;--spend:#5a6270;--danger-bg:rgba(242,139,130,.12)}}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--fg);
+      font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
+      line-height:1.55;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:880px;margin:0 auto;padding:32px 20px 64px}
+    header h1{font-size:1.55rem;margin:0 0 6px}
+    .meta{color:var(--muted);font-size:.86rem;margin:0}
+    .badge{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:999px;
+      background:rgba(26,115,232,.12);color:var(--accent);margin-left:6px;vertical-align:middle}
+    section{margin-top:32px}
+    h2{font-size:1.1rem;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+    h3{font-size:.95rem;margin:18px 0 6px}
+    .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    @media(max-width:640px){.kpi{grid-template-columns:repeat(2,1fr)}}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+    .card .label{font-size:.78rem;color:var(--muted)}
+    .card .value{font-size:1.4rem;font-weight:700;margin-top:4px}
+    .card .delta{font-size:.8rem;margin-top:2px}
+    .up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)}
+    ul.hl{margin:0;padding-left:18px} ul.hl li{margin:6px 0}
+    table{width:100%;border-collapse:collapse;font-size:.88rem}
+    th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line)}
+    th:first-child,td:first-child{text-align:left}
+    thead th{color:var(--muted);font-weight:600;font-size:.8rem}
+    tbody tr:hover{background:var(--card)}
+    .obj{font-size:.72rem;color:var(--muted)}
+    .actions li{margin:8px 0}
+    footer{margin-top:48px;color:var(--muted);font-size:.78rem;text-align:center}
+    .note{background:rgba(183,121,31,.1);border-left:3px solid var(--warn);
+      padding:10px 14px;border-radius:6px;font-size:.84rem;margin-top:12px}
+    .chart{background:var(--card);border:1px solid var(--line);border-radius:12px;
+      padding:16px 14px;margin-top:14px}
+    .chart figcaption{font-size:.84rem;color:var(--fg);margin-bottom:2px;font-weight:600}
+    .chart .sub{font-size:.78rem;color:var(--muted);margin-bottom:8px}
+    .chart svg{width:100%;height:auto;display:block}
+    .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.78rem;color:var(--muted);margin-top:8px}
+    .legend span{display:inline-flex;align-items:center;gap:5px}
+    .swatch{width:11px;height:11px;border-radius:2px;display:inline-block}
+    .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+    .take{font-size:.84rem;margin-top:8px;padding-left:2px}
+    .sug{background:var(--card);border:1px solid var(--line);border-radius:10px;
+      padding:12px 14px;margin-top:10px}
+    .sug b{color:var(--accent)}
+    .sev{font-size:.7rem;padding:1px 7px;border-radius:999px;margin-left:6px}
+    .sev-h{background:rgba(192,57,43,.14);color:var(--down)}
+    .sev-m{background:rgba(183,121,31,.14);color:var(--warn)}
+    .sev-l{background:rgba(10,124,58,.14);color:var(--up)}
+    .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.82rem;
+      background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:12px}
+    .flow .node{padding:5px 10px;border-radius:8px;font-weight:600;font-size:.8rem}
+    .flow .arrow{color:var(--muted);font-size:1rem}
+    .n-blue{background:rgba(66,133,244,.14);color:var(--g-blue)}
+    .n-green{background:rgba(52,168,83,.16);color:var(--g-green)}
+    .n-yellow{background:rgba(251,188,4,.18);color:var(--warn)}
+    .n-red{background:rgba(234,67,53,.14);color:var(--g-red)}
+    @media print{body{background:#fff;color:#000}.card,.chart,.sug,.flow{background:#fff}}
+    text{font-family:inherit}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🔎 Google Ads 검색 캠페인 진단 <span class="badge">읽기 전용</span></h1>
+    <p class="meta">2026-06-04 ~ 06-10 · Google Ads 검색 · 결로아(샘플) · 키워드 15 / 검색어 12 · 생성 2026-06-18</p>
+  </header>
+
+  <section class="kpi">
+    <div class="card"><div class="label">총 광고비</div><div class="value">₩5.27M</div>
+      <div class="delta">클릭 10,470 · 평균 CPC ₩503</div></div>
+    <div class="card"><div class="label">통합 ROAS</div><div class="value warn">1.10</div>
+      <div class="delta warn">매출=광고비 턱걸이</div></div>
+    <div class="card"><div class="label">평균 품질점수</div><div class="value">8.1<span style="font-size:.9rem;color:var(--muted)"> / 10</span></div>
+      <div class="delta down">7점 미만 2건</div></div>
+    <div class="card"><div class="label">검색어 누수</div><div class="value down">25%</div>
+      <div class="delta down">≈ ₩0.34M · 전환 0~1 클릭</div></div>
+  </section>
+
+  <section class="highlights">
+    <h2>이번 주 핵심 3가지 — 검색광고의 돈은 어디서 새는가</h2>
+    <ul class="hl">
+      <li>🏷️ <b>브랜드 vs 일반</b> : 브랜드 키워드(결로아·결로아 토너) ROAS <b>5.57 / 6.91</b> — 지출 5%로 매출 30%. 반면 일반 키워드 다수는 BEP(1.0) 미달.</li>
+      <li>💧 <b>검색어 누수 25%</b> : 고객이 실제 친 검색 클릭 2,000건 중 <b>500건(25%)</b>이 전환 0~1 — "내가 산 키워드 ≠ 고객 검색어"의 비용.</li>
+      <li>⚖️ <b>품질점수 = 비용</b> : "토너" 품질점수 <b>5점</b> → CPC <b>₩760</b>(캠페인 최고). 품질점수가 낮으면 같은 노출에도 입찰 단가가 오릅니다.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 품질점수 구성 도식 (Google 전용 개념) ============ -->
+  <section>
+    <h2>📐 품질점수는 어떻게 CPC를 결정하나 (Google Ads 구조)</h2>
+    <div class="flow">
+      <span class="node n-blue">예상 CTR</span><span class="arrow">＋</span>
+      <span class="node n-blue">광고 관련성</span><span class="arrow">＋</span>
+      <span class="node n-blue">방문페이지 경험</span>
+      <span class="arrow">→</span>
+      <span class="node n-yellow">품질점수 (1~10)</span>
+      <span class="arrow">×</span>
+      <span class="node n-yellow">입찰가</span>
+      <span class="arrow">→</span>
+      <span class="node n-green">광고 순위(Ad Rank)</span>
+      <span class="arrow">→</span>
+      <span class="node n-red">실제 CPC</span>
+    </div>
+    <p class="take">→ 품질점수가 높으면 <b>더 낮은 입찰가로도</b> 같은 순위를 얻습니다. 즉 품질점수 개선 = 직접적인 CPC 절감. "토너"(QS 5)의 ₩760 CPC는 입찰을 올려서가 아니라 <b>품질점수가 낮아서</b>입니다.</p>
+  </section>
+
+  <!-- ============ 차트 ============ -->
+  <section class="charts">
+    <h2>한눈에 보기 (구글 검색광고 전용 도식 3종)</h2>
+
+    <!-- Chart 1: 검색 의도 분포 (누수 정량화) -->
+    <figure class="chart">
+      <figcaption>① 검색 의도 분포 — 검색 클릭 2,000건은 어디로 갔나</figcaption>
+      <div class="sub">키워드가 아니라 "고객이 실제 입력한 검색어"를 의도별로 분류. 누수 구간이 제외 키워드 후보.</div>
+      <svg viewBox="0 0 600 110" role="img" aria-label="검색 의도 분포 누적 막대">
+        <!-- bar x40..560 = 520px for 2000 clicks → 0.26px/click -->
+        <g>
+          <rect x="40"    y="30" width="267.8" height="34" rx="3" fill="var(--g-green)"/>
+          <rect x="307.8" y="30" width="39"    height="34"      fill="var(--g-blue)"/>
+          <rect x="346.8" y="30" width="83.2"  height="34"      fill="var(--g-yellow)"/>
+          <rect x="430"   y="30" width="130"   height="34" rx="3" fill="var(--g-red)"/>
+        </g>
+        <g font-size="11" font-weight="700" text-anchor="middle">
+          <text x="173" y="52" fill="#fff">구매 의도 52%</text>
+          <text x="388" y="52" fill="#5a3d00">정보 16%</text>
+          <text x="495" y="52" fill="#fff">누수 25%</text>
+        </g>
+        <g font-size="10" fill="var(--muted)" text-anchor="middle">
+          <text x="173" y="78">1,030클릭 · 전환 65</text>
+          <text x="327" y="78">비교 7.5%</text>
+          <text x="388" y="90">320 · 전환 9</text>
+          <text x="495" y="78">500클릭 · 전환 1</text>
+        </g>
+      </svg>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--g-green)"></i>구매 의도 (고전환)</span>
+        <span><i class="dot" style="background:var(--g-blue)"></i>경쟁사 비교 (LP 기회)</span>
+        <span><i class="dot" style="background:var(--g-yellow)"></i>정보 탐색 (약전환)</span>
+        <span><i class="dot" style="background:var(--g-red)"></i>누수 (전환 0~1)</span>
+      </div>
+      <p class="take">→ 검색 클릭의 <b>4건 중 1건(25%)이 전환 없이 소진</b>. "유통기한·영어로·피부과 시술·화장솜"이 주범 → 제외 키워드로 차단하면 약 <b>₩0.34M/주</b> 절감.</p>
+    </figure>
+
+    <!-- Chart 2: 품질점수 × CPC 경제학 산점도 -->
+    <figure class="chart">
+      <figcaption>② 품질점수 ↔ CPC 경제학 — 점수가 낮을수록 비싸진다</figcaption>
+      <div class="sub">버블 = 키워드 · 크기 = 지출 · 색 = ROAS(초록≥1·빨강&lt;1). 좌상단 빨강 영역이 "비싸고 부진" 위험 구역.</div>
+      <svg viewBox="0 0 600 330" role="img" aria-label="품질점수 대비 CPC 산점도">
+        <!-- danger zone: low QS + high CPC (top-left) -->
+        <rect x="70" y="30" width="170" height="100" fill="var(--danger-bg)"/>
+        <text x="80" y="48" font-size="10" fill="var(--g-red)" font-weight="700">⚠ 위험 구역</text>
+        <text x="80" y="62" font-size="9" fill="var(--g-red)">낮은 점수 · 높은 CPC</text>
+        <!-- axes -->
+        <line x1="70" y1="280" x2="565" y2="280" stroke="var(--line)"/>
+        <line x1="70" y1="30"  x2="70"  y2="280" stroke="var(--line)"/>
+        <!-- y ticks CPC: 0->280,200->217.5,400->155,600->92.5,800->30 -->
+        <g fill="var(--muted)" font-size="10" text-anchor="end">
+          <text x="62" y="284">₩0</text><text x="62" y="221">200</text>
+          <text x="62" y="159">400</text><text x="62" y="96">600</text><text x="62" y="34">800</text>
+        </g>
+        <g stroke="var(--line)" opacity=".45">
+          <line x1="70" y1="217.5" x2="565" y2="217.5"/><line x1="70" y1="155" x2="565" y2="155"/>
+          <line x1="70" y1="92.5" x2="565" y2="92.5"/>
+        </g>
+        <!-- x ticks QS 5..10 -->
+        <g fill="var(--muted)" font-size="11" text-anchor="middle">
+          <text x="110" y="298">QS 5</text><text x="196" y="298">6</text><text x="282" y="298">7</text>
+          <text x="368" y="298">8</text><text x="454" y="298">9</text><text x="540" y="298">10</text>
+        </g>
+        <text x="317" y="318" fill="var(--muted)" font-size="11" text-anchor="middle">품질점수 (높을수록 →)</text>
+        <text x="20" y="155" fill="var(--muted)" font-size="11" text-anchor="middle" transform="rotate(-90 20 155)">CPC (₩)</text>
+        <!-- inverse trend line -->
+        <line x1="120" y1="55" x2="535" y2="232" stroke="var(--muted)" stroke-dasharray="5 5" opacity=".6"/>
+        <text x="455" y="250" font-size="9" fill="var(--muted)">점수↑ → CPC↓ 경향</text>
+        <!-- bubbles: cx by QS, cy = 280 - CPC*0.3125 -->
+        <!-- 토너 QS5 CPC760 -->
+        <circle cx="110" cy="42.5" r="22" fill="var(--g-red)" opacity=".75"/>
+        <text x="110" y="46" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">토너</text>
+        <!-- 21일챌린지 QS6 CPC350 -->
+        <circle cx="196" cy="170.6" r="5" fill="var(--g-green)" opacity=".8"/>
+        <!-- 지성 QS7 CPC540 / 남자 QS7 CPC590 -->
+        <circle cx="270" cy="111.25" r="9" fill="var(--g-red)" opacity=".7"/>
+        <circle cx="296" cy="95.6" r="7" fill="var(--g-red)" opacity=".7"/>
+        <!-- 모공토너추천 QS8 CPC610 / 토너패드 QS8 CPC480 -->
+        <circle cx="378" cy="89.4" r="17" fill="var(--g-red)" opacity=".65"/>
+        <text x="378" y="92" font-size="9" fill="#fff" text-anchor="middle">모공추천</text>
+        <circle cx="350" cy="130" r="12" fill="var(--g-red)" opacity=".65"/>
+        <!-- 모공토너 QS9 CPC520 / 저자극 QS9 CPC450 -->
+        <circle cx="460" cy="117.5" r="17" fill="var(--g-red)" opacity=".65"/>
+        <text x="460" y="120" font-size="9" fill="#fff" text-anchor="middle">모공토너</text>
+        <circle cx="436" cy="139.4" r="10" fill="var(--g-green)" opacity=".7"/>
+        <!-- PHA QS10 CPC380 / 결로아 QS10 CPC190 / 결로아토너 QS10 CPC170 -->
+        <circle cx="528" cy="161.25" r="7" fill="var(--g-green)" opacity=".8"/>
+        <text x="528" y="151" font-size="8.5" fill="var(--g-green)" text-anchor="middle">PHA</text>
+        <circle cx="548" cy="220.6" r="8" fill="var(--g-green)" opacity=".85"/>
+        <text x="548" y="241" font-size="8.5" fill="var(--g-green)" text-anchor="middle">결로아</text>
+        <circle cx="525" cy="226.9" r="6" fill="var(--g-green)" opacity=".85"/>
+      </svg>
+      <p class="take">→ 우하단(<b>결로아·PHA</b>)은 점수 높고 CPC 낮은 효율 자산. 좌상단 위험 구역의 <b>"토너"</b>는 점수 최저·CPC 최고·지출 최대가 겹친 1순위 정리 대상.</p>
+    </figure>
+
+    <!-- Chart 3: 키워드 포트폴리오 4사분면 -->
+    <figure class="chart">
+      <figcaption>③ 키워드 포트폴리오 — ROAS × 지출로 본 4사분면</figcaption>
+      <div class="sub">가로 = 지출(로그) · 세로 = ROAS · 가로선 = 손익분기 1.0. 어느 키워드를 늘리고 어느 것을 끊을지 한 장으로.</div>
+      <svg viewBox="0 0 600 290" role="img" aria-label="키워드 포트폴리오 사분면">
+        <!-- quadrant guides -->
+        <line x1="90" y1="218.6" x2="565" y2="218.6" stroke="var(--down)" stroke-dasharray="4 4"/>
+        <text x="96" y="214" font-size="9" fill="var(--down)">BEP 1.0</text>
+        <line x1="320" y1="20" x2="320" y2="255" stroke="var(--line)"/>
+        <!-- quadrant labels -->
+        <text x="100" y="34" font-size="10" fill="var(--g-green)" font-weight="700">💎 숨은 보석 · 증액 후보</text>
+        <text x="540" y="34" font-size="10" fill="var(--accent)" font-weight="700" text-anchor="end">🚀 주력 · 유지</text>
+        <text x="100" y="250" font-size="10" fill="var(--muted)" font-weight="700">👀 관망 · 소액</text>
+        <text x="540" y="250" font-size="10" fill="var(--g-red)" font-weight="700" text-anchor="end">🔴 돈 새는 곳 · 차단/분해</text>
+        <!-- axes labels -->
+        <text x="327" y="278" font-size="11" fill="var(--muted)" text-anchor="middle">지출 (적음 ← → 많음)</text>
+        <text x="20" y="140" font-size="11" fill="var(--muted)" text-anchor="middle" transform="rotate(-90 20 140)">ROAS</text>
+        <!-- y ticks ROAS 0,1,..7 : y=250-ROAS*31.4 -->
+        <g fill="var(--muted)" font-size="9" text-anchor="end">
+          <text x="84" y="253">0</text><text x="84" y="159">3</text><text x="84" y="65">6</text>
+        </g>
+        <!-- bubbles x=90+(log10(spend)-4.72)*331, y=250-ROAS*31.4 -->
+        <!-- 결로아토너 6.91 / 105400 -->
+        <circle cx="190" cy="33" r="6" fill="var(--g-green)" opacity=".85"/>
+        <text x="200" y="36" font-size="9" fill="var(--g-green)">결로아 토너 6.91</text>
+        <!-- 결로아 5.57 / 178600 -->
+        <circle cx="266" cy="75" r="8" fill="var(--g-green)" opacity=".85"/>
+        <text x="278" y="78" font-size="9" fill="var(--g-green)">결로아 5.57</text>
+        <!-- PHA 1.98 / 155800 -->
+        <circle cx="246" cy="188" r="7" fill="var(--g-green)" opacity=".8"/>
+        <text x="200" y="191" font-size="9" fill="var(--muted)" text-anchor="end">PHA 1.98 ·</text>
+        <!-- 저자극 1.21 / 324000 (우상 경계) -->
+        <circle cx="351" cy="212" r="10" fill="var(--accent)" opacity=".55"/>
+        <!-- 나이아 1.54 / 136400 -->
+        <circle cx="227" cy="202" r="6" fill="var(--g-green)" opacity=".7"/>
+        <!-- 남자 0.52 / 135700 (좌하) -->
+        <circle cx="227" cy="234" r="6" fill="var(--g-red)" opacity=".6"/>
+        <text x="219" y="237" font-size="9" fill="var(--muted)" text-anchor="end">남자 토너 0.52</text>
+        <!-- 각질 0.85 / 147900 -->
+        <circle cx="238" cy="223" r="6" fill="var(--g-red)" opacity=".5"/>
+        <!-- 지성 0.84 / 232200 (우하 경계 좌측) -->
+        <circle cx="304" cy="224" r="9" fill="var(--g-red)" opacity=".55"/>
+        <!-- 토너패드 0.92 / 470400 -->
+        <circle cx="405" cy="221" r="13" fill="var(--g-red)" opacity=".55"/>
+        <!-- 모공토너 0.95 / 852800 -->
+        <circle cx="490" cy="220" r="17" fill="var(--g-red)" opacity=".55"/>
+        <!-- 모공추천 0.99 / 908900 -->
+        <circle cx="500" cy="219" r="18" fill="var(--g-red)" opacity=".5"/>
+        <text x="470" y="200" font-size="8.5" fill="var(--muted)">모공 키워드군 (BEP 근접)</text>
+        <!-- 토너 0.19 / 1383200 -->
+        <circle cx="555" cy="244" r="22" fill="var(--g-red)" opacity=".8"/>
+        <text x="540" y="247" font-size="9" font-weight="700" fill="#fff" text-anchor="end">토너 0.19</text>
+      </svg>
+      <p class="take">→ <b>우하단(돈 새는 곳)</b>의 "토너"는 버블이 가장 큼(지출 최대) = 차단 1순위. <b>좌상단(숨은 보석)</b> 브랜드·PHA는 소액인데 고ROAS = 증액 여력. "모공" 키워드군은 BEP 바로 아래 → 품질점수·LP 개선으로 흑자 전환 가능.</p>
+    </figure>
+  </section>
+
+  <!-- ============ 섹션 1 키워드 성과 ============ -->
+  <section class="tables">
+    <h2>섹션 1 · 키워드 성과 (ROAS = 전환가치 ÷ 지출)</h2>
+    <table>
+      <thead><tr><th>키워드</th><th>노출</th><th>클릭</th><th>CPC</th><th>전환</th><th>전환가치</th><th>ROAS</th><th>QS</th></tr></thead>
+      <tbody>
+        <tr><td><b>결로아 토너</b> <span class="obj">· 브랜드</span></td><td>4,100</td><td>620</td><td>₩170</td><td>52</td><td>₩728,000</td><td class="up"><b>6.91</b></td><td>10</td></tr>
+        <tr><td><b>결로아</b> <span class="obj">· 브랜드</span></td><td>6,800</td><td>940</td><td>₩190</td><td>71</td><td>₩994,000</td><td class="up"><b>5.57</b></td><td>10</td></tr>
+        <tr><td>PHA 토너</td><td>9,200</td><td>410</td><td>₩380</td><td>22</td><td>₩308,000</td><td class="up">1.98</td><td>10</td></tr>
+        <tr><td>나이아신아마이드 토너</td><td>6,700</td><td>310</td><td>₩440</td><td>15</td><td>₩210,000</td><td>1.54</td><td>9</td></tr>
+        <tr><td>어성초 토너</td><td>5,600</td><td>240</td><td>₩430</td><td>11</td><td>₩154,000</td><td>1.49</td><td>8</td></tr>
+        <tr><td>지성 피부 토너</td><td>12,400</td><td>430</td><td>₩540</td><td>14</td><td>₩196,000</td><td class="down">0.84</td><td class="warn">7</td></tr>
+        <tr><td>남자 토너</td><td>7,300</td><td>230</td><td>₩590</td><td>5</td><td>₩70,000</td><td class="down">0.52</td><td class="warn">7</td></tr>
+        <tr><td><b>토너</b> <span class="obj">· 광범위 단일어</span></td><td>96,000</td><td>1,820</td><td>₩760</td><td>19</td><td>₩266,000</td><td class="down"><b>0.19</b></td><td class="down">5</td></tr>
+      </tbody>
+    </table>
+    <p class="meta">※ 표시는 TOP 5 / BOTTOM 3. 전체 15개 키워드 기준 집계.</p>
+  </section>
+
+  <!-- ============ 섹션 2 검색어 ============ -->
+  <section class="tables">
+    <h2>섹션 2 · 검색어 리포트 (내가 산 키워드 ≠ 고객이 친 검색어)</h2>
+    <table>
+      <thead><tr><th>실제 검색어</th><th>매칭 키워드</th><th>클릭</th><th>전환</th><th>의도 분류</th></tr></thead>
+      <tbody>
+        <tr><td>결로아 포어 토너 후기</td><td>결로아 토너</td><td>280</td><td>27</td><td class="up" style="text-align:left">구매 — 브랜드 고전환</td></tr>
+        <tr><td>모공 토너 추천 20대</td><td>모공 토너 추천</td><td>320</td><td>18</td><td class="up" style="text-align:left">구매 — 타겟 정확</td></tr>
+        <tr><td><b>메디큐브 토너 비교</b></td><td>모공 토너</td><td>150</td><td>7</td><td class="warn" style="text-align:left">💡 경쟁사 비교 → 비교 LP 기회</td></tr>
+        <tr><td>피부과 모공 시술</td><td>모공 토너</td><td>170</td><td class="down">0</td><td class="down" style="text-align:left">누수 — 시술 의도, 제외 후보</td></tr>
+        <tr><td>토너 유통기한 지난거</td><td>토너</td><td>140</td><td class="down">0</td><td class="down" style="text-align:left">누수 — 보관 정보, 제외 후보</td></tr>
+        <tr><td>토너 영어로</td><td>토너</td><td>90</td><td class="down">0</td><td class="down" style="text-align:left">누수 — 정보 탐색, 제외 후보</td></tr>
+        <tr><td>토너 화장솜</td><td>토너</td><td>100</td><td>1</td><td class="warn" style="text-align:left">누수 — 소모품 탐색, 제외 검토</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ 섹션 3 품질점수 ============ -->
+  <section class="tables">
+    <h2>섹션 3 · 품질점수 경고 (7점 미만 + 원인 추정)</h2>
+    <table>
+      <thead><tr><th>키워드</th><th>품질점수</th><th>약점 구성요소(추정)</th><th>CPC</th><th>행동</th></tr></thead>
+      <tbody>
+        <tr><td><b>토너</b></td><td class="down"><b>5</b></td><td style="text-align:left">광고 관련성↓ (의도 불일치)</td><td>₩760</td><td style="text-align:left"><b>세부 키워드로 분해</b> · 광범위 매치 축소</td></tr>
+        <tr><td><b>21일 챌린지</b></td><td class="warn"><b>6</b></td><td style="text-align:left">방문페이지 경험↓ (전용 LP 부재)</td><td>₩350</td><td style="text-align:left"><b>5-3 상세페이지로 챌린지 LP 제작</b></td></tr>
+      </tbody>
+    </table>
+    <div class="note">📌 품질점수 7점 미만은 <b>같은 노출에도 CPC가 오르는</b> 구조적 비용 신호입니다. 위 "약점 구성요소"를 개선하면 입찰가를 올리지 않고도 순위·CPC가 개선됩니다.</div>
+  </section>
+
+  <!-- ============ 제외 키워드 후보 ============ -->
+  <section class="actions">
+    <h2>🚫 제외 키워드 후보 4건 (적용은 사용자 수동)</h2>
+    <ul class="actions">
+      <li>☐ <b>유통기한</b> — "토너 유통기한 지난거"(전환 0) · 구매 의도 없음</li>
+      <li>☐ <b>영어로</b> — "토너 영어로"(전환 0) · 단순 정보 탐색</li>
+      <li>☐ <b>피부과 시술</b> — "피부과 모공 시술"(전환 0) · 시술 의도, 화장품 아님</li>
+      <li>☐ <b>화장솜</b> — "토너 화장솜"(전환 1) · 소모품 탐색 (제외 검토)</li>
+    </ul>
+    <div class="note">⚠️ <b>읽기 전용 + 승인 원칙</b> : 에이전트는 제외 키워드를 <b>직접 적용하지 않습니다</b>.
+      Google Ads &gt; 키워드 &gt; 제외 키워드에서 사용자가 직접 검토 후 등록하세요. 예상 절감 ≈ ₩0.34M/주.</div>
+  </section>
+
+  <section class="actions">
+    <h2>다음 액션</h2>
+    <ul class="actions">
+      <li>☐ <b>"토너" 단일어</b> 입찰 중단/분해 — 4사분면 우하단 + 위험 구역 동시 점유(지출 26% · ROAS 0.19 · QS 5).</li>
+      <li>☐ <b>브랜드 키워드</b> 방어 예산 우선 확보 — 잠식 방지(지출 5% → 매출 30%).</li>
+      <li>☐ <b>제외 키워드 4건</b> 등록 — 검색어 누수 25% 차단.</li>
+      <li>☐ <b>"메디큐브 토너 비교"</b> → 5-3 상세페이지로 비교 LP 제작, 경쟁 검색 의도 흡수.</li>
+      <li>☐ <b>"모공" 키워드군</b>(BEP 근접) 품질점수·LP 개선으로 흑자 전환 시도.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 리포트 보완 제안 (Google 전용) ============ -->
+  <section class="suggestions">
+    <h2>🔧 이 리포트의 보완 제안 (검색광고 분석가 관점)</h2>
+    <p class="meta">현재는 키워드·검색어·품질점수 3섹션은 충실하나, 검색광고 고유의 "기회 손실"과 "비용 구조" 축이 빠져 있습니다.</p>
+
+    <div class="sug"><b>① 노출 점유율(IS) · 검색 상단 IS 손실 추가</b><span class="sev sev-h">High</span><br>
+      지금은 "집행된 노출"만 보이고 <b>놓친 노출</b>은 안 보입니다. 예산 부족 IS 손실 vs 순위(품질점수) IS 손실을 분리하면, "토너"가 돈을 더 써야 하는지 vs 품질점수를 고쳐야 하는지가 갈립니다.</div>
+
+    <div class="sug"><b>② 매치타입별 성과 분해 (광범위/구문/일치)</b><span class="sev sev-h">High</span><br>
+      누수의 근본 원인은 대개 <b>광범위 매치</b>입니다. "토너"가 어떤 매치타입으로 어떤 검색어를 끌어왔는지 매치타입 컬럼을 추가하면, 제외 키워드보다 매치타입 조정이 더 근본 처방일 수 있습니다.</div>
+
+    <div class="sug"><b>③ 검색어 n-gram 분석</b><span class="sev sev-m">Mid</span><br>
+      검색어를 단어 단위로 쪼개 "시술·유통기한·영어" 같은 <b>반복 누수 토큰</b>을 자동 집계하면, 개별 검색어가 아니라 토큰 단위로 제외해 미래 누수까지 선제 차단할 수 있습니다.</div>
+
+    <div class="sug"><b>④ 마진 기준 손익분기 ROAS</b><span class="sev sev-m">Mid</span><br>
+      현재 BEP=1.0은 '매출=광고비'일 뿐 실제 흑자선이 아닙니다. 마진율 40%면 BEP ROAS는 <b>2.5</b> — 이 기준이면 일반 키워드 대부분이 적자, 브랜드만 흑자로 해석이 달라집니다.</div>
+
+    <div class="sug"><b>⑤ 품질점수 구성요소 3종 원시값</b><span class="sev sev-l">Low</span><br>
+      품질점수를 숫자(5·6)로만 주지 말고 예상 CTR·광고 관련성·LP 경험 각각의 평균이상/이하 등급을 표기하면, "무엇을 고쳐야 점수가 오르는지"가 바로 나옵니다.</div>
+
+    <div class="sug"><b>⑥ 자동 입찰 시뮬레이션 (What-if)</b><span class="sev sev-l">Low</span><br>
+      "토너 차단 + 브랜드 +20% 증액 시 예상 전환가치 +Δ" 같은 재배분 시뮬레이션 한 줄을 붙이면 의사결정 속도가 올라갑니다.</div>
+  </section>
+
+  <footer>marketing-os · google-ads-analyzer · 자동 생성 · 읽기 전용(상태·예산 변경 없음)</footer>
+</div>
+</body>
+</html>

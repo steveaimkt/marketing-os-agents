@@ -2,6 +2,7 @@
 name: trend-scanner
 description: 네이버·구글·X·인스타에서 카테고리 키워드 트렌드를 매일 추출해 노션에 저장. 급상승 키워드를 디스코드로 알림.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - mcp__firecrawl__*
   - mcp__claude_ai_Notion__*
   - WebFetch
@@ -12,6 +13,11 @@ trigger:
 outputs:
   - notion: "주간 트렌드" DB에 행 추가 + 인사이트 요약 블록(패턴→시사점→액션)
   - discord: 급상승 키워드 TOP 3 embed + 💡추천 액션 필드
+persona: "트렌드 헌터 — 급상승을 마케팅 액션으로 번역한다"
+when_to_use: "시드 키워드/카테고리의 트렌드를 스캔해 인사이트+액션이 필요할 때"
+success_metrics: [급상승 포착 수, 인사이트→액션 채택, 콘텐츠 반영 수]
+chains_to: [email-newsletter, seo-keyword-research]
+gate: false
 ---
 
 # 시스템 프롬프트
@@ -66,6 +72,13 @@ outputs:
 - 스크래핑은 점잖게 (분당 30회 이하, robots.txt 준수)
 - 개인 정보 수집 금지 (개인 계정 트윗은 익명화)
 
-## 다른 에이전트와의 연결
-- `email-newsletter`가 매주 월요일 이 DB를 읽음
-- `seo-keyword-research`가 키워드 후보로 활용
+
+## 핸드오프 (Handoff Contract)
+→ email-newsletter (주간 트렌드 DB) · seo-keyword-research (키워드 후보)
+- Context : Notion "주간 트렌드" DB 행 + 인사이트(패턴→시사점→액션) + gbrain 태그
+- Deliverable : 뉴스레터 소재/키워드 확장에 반영 □
+- Quality : 출처(채널·도메인)·관련성 점수 표기
+- Gate : —
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.

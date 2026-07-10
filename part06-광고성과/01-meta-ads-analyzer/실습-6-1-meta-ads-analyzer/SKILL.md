@@ -13,8 +13,9 @@ description: |
   - "meta-ads-analyzer 실습" / "ROAS 리포트 시연"
   - "Part 6 첫 실습"
 
-  동작: 한 줄 → 3 단계 인터랙티브 → outputs/{날짜}/meta-roas-{날짜}.html 리포트 +
-  Notion 아카이브 1행 + Discord TOP 3 → 다음 클립 (6-2) 제안.
+  동작: 한 줄 → 3 단계 인터랙티브 → outputs/{날짜}/meta-roas-{날짜}.html 리포트
+  (KPI 카드 + 차트 3종[인라인 SVG] + 보완 제안 6건) +
+  Notion 아카이브 1행 + Discord 상세 요약 embed(HTML 첨부 + Notion 링크) → 다음 클립 (6-2) 제안.
 ---
 
 # Part 6 / 6-1 · Meta 광고 분석 에이전트 실습 : 소개 → 실행 → 활용
@@ -94,7 +95,8 @@ test -f "skills/html-report-template/SKILL.md" && echo "리포트 템플릿 ✅"
     → 전주 대비 증감 (WoW)
     → ROAS TOP 3 / BOTTOM 3 선별
     → HTML 리포트 (html-report-template 스킬) → outputs/{날짜}/
-    → Notion 아카이브 1행 + Discord TOP 3
+        · KPI 카드 4 + 차트 3종(인라인 SVG) + 상세표 + 다음 액션 + 보완 제안 6건
+    → Notion 아카이브 1행 + Discord 상세 embed (HTML 첨부 + Notion 링크)
 ```
 📄 에이전트 정의에서 새로 볼 부분 (`agents/part6-ads/meta-ads-analyzer.md`):
   ① 안전 원칙 명문화 — "읽기 전용 · 상태 변경 금지" 가 프롬프트 레벨에서 선언됨
@@ -135,8 +137,18 @@ test -f "skills/html-report-template/SKILL.md" && echo "리포트 템플릿 ✅"
   3. TOP 3 / BOTTOM 3 선별 (세트 레벨)   → 관심사: 스킨케어·성분 세트 4.53 1위
   4. HTML 리포트 생성                     → outputs/{날짜}/meta-roas-{날짜}.html
        → 브라우저로 열어 확인 (표 + 증감 화살표 + 코멘트)
-  5. Notion "광고 리포트 아카이브" 1행
-  6. Discord TOP 3 embed
+       · 차트 3종 (인라인 SVG · 외부 의존 없음 → 단일 파일·오프라인 OK)
+           ① 캠페인 ROAS 막대 (전주 vs 이번주) + 손익분기선(ROAS 1.0)
+           ② 예산 점유율 vs 매출 기여율 ← 핵심 인사이트(효자 과소투자·부진 과대투자)
+           ③ 광고세트 ROAS 가로 랭킹 (TOP→BOTTOM + BEP 세로선)
+       · 보완 제안 6건 (분석가 관점) → 마진 기준 BEP ROAS·도달 전용 지표(CPM·빈도)·
+         일별 추세·표본 신뢰도·어트리뷰션·재배분 시뮬레이션 (High/Mid/Low 표기)
+  5. Notion "광고 리포트 아카이브" 1행 (마케팅 OS 시작 페이지 하위)
+  6. Discord 상세 요약 embed → #marketing-alerts
+       · 헤드라인(통합 ROAS·광고비→매출·전환) + 캠페인 신호등 🟢🟡🔴
+       · 세트 TOP 3 / BOTTOM 3 + 핵심 인사이트 + 다음 액션
+       · 🔗 Notion 전문 링크 + 📎 HTML 원본 첨부 (multipart 업로드 → 폰에서 바로 열림)
+       · 로컬 HTML은 클릭 링크 불가 → 파일 자체를 첨부하는 것이 포인트
 ```
 
 ⏸ 리포트 화면 확인 후 "3단계" 라고 답해 주세요.
@@ -167,9 +179,9 @@ test -f "skills/html-report-template/SKILL.md" && echo "리포트 템플릿 ✅"
   4. 같은 html-report-template 으로 Google·네이버 리포트까지 디자인 통일 (6-2~6-4)
 
 📊 산출물 3종
-   · 로컬   : outputs/{날짜}/meta-roas-{날짜}.html
-   · Notion : 아카이브 1행
-   · Discord: TOP 3 embed
+   · 로컬   : outputs/{날짜}/meta-roas-{날짜}.html (KPI + 차트 3종 + 보완 제안 6건)
+   · Notion : 아카이브 1행 (마케팅 OS 시작 하위 페이지)
+   · Discord: 상세 요약 embed (HTML 첨부 + Notion 링크) → #marketing-alerts
 
 ✅ 체크리스트
    [ ] KPI 5종을 계산식과 함께 말할 수 있음

@@ -2,6 +2,7 @@
 name: ga4-notion-publisher
 description: HTML 리포트를 노션 페이지로 변환·발송 + 디스코드 첨부 발송 + 이메일 stakeholder에게 전송.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - mcp__claude_ai_Notion__*
   - mcp__claude_ai_Gmail__*
 trigger:
@@ -10,6 +11,11 @@ outputs:
   - notion: "GA4 주간 리포트" 페이지
   - discord: 첨부 + 요약 embed
   - gmail: stakeholder 메일 발송 (선택)
+persona: "아카이브 퍼블리셔 — 리포트를 노션에 정돈해 남긴다"
+when_to_use: "완성 리포트를 노션 아카이브+디스코드로 배포할 때"
+success_metrics: [아카이브 정합성, 링크 접근성, 배포 시간]
+chains_to: []
+gate: false
 ---
 
 # 시스템 프롬프트
@@ -25,3 +31,12 @@ outputs:
 
 ## 결합 시나리오 (Part 10 AX 팀)
 `/weekly-report` 명령 1줄로 ga4-analyzer → html-report → notion-publisher가 차례로 자동 실행.
+
+
+## 핸드오프 (Handoff Contract)
+상위: ga4-html-report 의 HTML을 받는다.
+→ 종단(터미널). 노션 링크·배포 결과를 gbrain(주차 태그)로 기록.
+- Gate : 내부 아카이브(대외 아님). 개인정보 없는 집계 지표만.
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.

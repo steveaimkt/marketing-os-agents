@@ -2,9 +2,13 @@
 name: 실습-6-5-ad-performance-checker
 description: |
   Part 6 클립 6-5 (광고 성과 임계값 감시 에이전트) 실습 시연 스킬. 사용자 한 줄 명령 →
-  ① 소개 (하는 일 + 연결 소스) → ② 실행 (작동 구조 + 데이터 준비 + 실제 실행) →
+  ① 소개 (하는 일 + 연결 소스) → ② 실행 (작동 구조 + 기준선 직접 정하기 + 실제 실행) →
   ③ 활용 (내 업무에 적용하는 방법).
   흐름 : ① 소개 ② 실행 ③ 활용. 자동 실행 금지. 단계마다 답 받고 다음.
+  "임계값 = 알람이 울리는 기준선" 으로 쉽게 풀어 설명한다 (화재경보기 비유).
+  2-0 에서 사용자가 기준선(ROAS·CPA·CTR)을 직접 골라 .env 에 반영 → 자기 기준으로 체크·발송을 체험한다.
+  2-3 위반 검출 시 실제 디스코드 웹훅(DISCORD_WEBHOOK_URL_ALERTS)으로 경고를 POST 해 알림이 뜨는 것까지 보인다.
+  3단계에 "시간당 자동 가동 스위치"(automation/hourly-ad-check.cron · crontab/launchd 등록, 승인 후)를 선택 단계로 둔다.
   THRESHOLD_ROAS_WARN=10.0 시뮬레이션으로 알림 장면을 결정적으로 재현한다.
 
   자동 호출 트리거:
@@ -59,6 +63,11 @@ description: |
 👉 2단계로 갈까요? (실제 실행을 직접 봅니다)
 ```
 
+🧯 **쉽게 말하면 = 우리 집 화재경보기.**
+  · 평소엔 조용, 연기가 일정 수준 넘으면 그때만 "삐-".
+  · 여기서 **"임계값" = 알람이 울리는 기준선** (경보기 민감도 다이얼). 어려운 말일 뿐, 뜻은 "여기 넘어가면 알려줘" 하는 선(線).
+  · 우리가 보는 기준선 3개 : **ROAS**(광고비 1원으로 몇 원 버나) · **CPA**(고객 1명 데려온 비용) · **CTR**(광고 100번 보이면 몇 번 눌리나).
+
 📐 **스킬? 에이전트?** → 도구(Meta·Google Ads) + 트리거(매시간 cron) + 산출(Discord 경고)이 있으니 🤖 **에이전트**. 만드는 법은 3-1의 **에이전트 5요소** 골격 그대로.
 
 ⏸ 답 받고 2단계로.
@@ -71,7 +80,12 @@ description: |
 
 ```bash
 grep -q "THRESHOLD_ROAS_WARN" .env 2>/dev/null && echo "임계값 ✅" || echo "임계값 미설정"
-test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
+test -f "discord-bot/webhook-config.json" && echo "webhook 설정파일 ✅"
+# 실제 발송에 쓸 경고 웹훅 URL 이 살아있는지까지 확인 (없으면 미리보기만 가능)
+set -a; source .env 2>/dev/null; set +a
+echo "$DISCORD_WEBHOOK_URL_ALERTS" | grep -q "^https://discord" \
+  && echo "경고 웹훅 URL ✅ (실제 발송 가능)" \
+  || echo "경고 웹훅 URL ❌ (미리보기만 · 발송하려면 DISCORD_WEBHOOK_URL_ALERTS 등록)"
 ```
 
 ```
@@ -83,13 +97,43 @@ test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
   | ② | Meta·Google Ads MCP      | 실계정 모드 조회 | {✅ / ❌} | 6-1·6-2 절차 |
   | ③ | Discord #marketing-alerts | 경고 채널        | {✅ / ❌} | 채널 생성 + webhook |
 
-  ❌ ① 은 sample-data/thresholds.env.sample 의 7종을 .env 에 자동 추가 후 재확인.
-     (ROAS_WARN 2.0 / BLOCK 1.0 · CPA_WARN 30000 / BLOCK 50000 · CTR_WARN 0.01 / BLOCK 0.005 · BUDGET_WARN 1.1)
+  ❌ ① 은 아래 "기준선 직접 정하기" 로 .env 에 등록 후 재확인.
   ③ 경고는 일반 알림과 다른 전용 채널 권장 (알림 등급 분리).
   샘플 모드는 ② 없이 진행 가능.
 ```
 
-⏸ 세팅 확인 받고 2-1로.
+> 🔧 **왜 코드가 아니라 .env 에 적나? (여기서 꼭 한 번 설명)**
+>   · 비유 : **에이전트 코드 = 에어컨 본체 / .env = 벽에 붙은 온도 리모컨.** 온도 바꾸려고 본체를 뜯지 않는다.
+>   · ① 코드 몰라도 숫자만 바꾸면 됨(마케터가 직접 튜닝) · ② 본체 안 건드려 고장 위험 0 ·
+>     ③ 기준선 7개가 한 파일에 모임 · ④ .env 는 git 에 안 올라가 웹훅 URL·API 키 같은 비밀과 함께 안전 보관.
+>   · 이게 강의 반복 원리 **"설정 외부화"** — 자주 바뀌는 값은 코드에서 빼서 .env 에 둔다.
+>   · 3회차 시뮬레이션에서 THRESHOLD_ROAS_WARN 숫자 하나만 바꿔 알림을 재현한 게 바로 그 증거.
+
+#### 🎚 기준선 직접 정하기 (2모드 · 인터랙티브)
+
+> **이 단계의 핵심 : 알람이 언제 울릴지 = 내가 정한다.** 두 갈래 중 하나를 사용자가 고른다.
+
+```
+   A. 기본값으로 바로 시작   ← 잘 모르겠으면 추천. 아래 표준 7종을 .env 에 자동 등록.
+   B. 내가 직접 정하기       ← 내 업종에 맞게 3개(ROAS·CPA·CTR)를 골라 등록.
+```
+
+**A. 기본값 7종** (sample-data/thresholds.env.sample)
+  ROAS_WARN 2.0 / BLOCK 1.0 · CPA_WARN 30000 / BLOCK 50000 · CTR_WARN 0.01 / BLOCK 0.005 · BUDGET_WARN 1.1
+
+**B. 직접 정하기** — 사용자에게 3가지만 묻는다 (모르면 업종 프리셋 제시):
+
+  | 기준선 | 질문(쉬운 말) | 업종 프리셋 (WARN) |
+  |---|---|---|
+  | ROAS | "광고비 1원으로 최소 몇 원은 벌어야 정상?" | 화장품/생필품 2.0 · 패션 3.0 · **고가·공구 1.5** · 명품 1.2 |
+  | CPA  | "고객 1명 데려오는 비용, 어디까지 OK?"     | 생필품 1만 · 화장품 3만 · **공구/가전 5~8만** · 명품 15만 |
+  | CTR  | "광고 100번 보이면 최소 몇 번은 눌려야?"   | 대부분 1% · 리치·동영상 0.5% |
+
+  · CRITICAL(BLOCK)은 WARN 대비 자동 제안 : ROAS는 절반, CPA는 1.6배, CTR은 절반. (사용자가 원하면 직접 지정)
+  · 입력받은 값을 .env 에 THRESHOLD_* 로 기록(기존 값 있으면 덮어쓰기) → grep 재확인.
+  · 등록 직후 "이 기준이면 샘플 캠페인 3건 중 몇 건이 걸리는지" 즉시 재채점해 보여준다 (내 기준선의 효과 체감).
+
+⏸ A/B 중 무엇으로 할지 답 받고 → .env 반영 → 재확인 후 2-1로.
 
 ### 2-1 · 작동 구조
 
@@ -129,23 +173,46 @@ test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
 
 ### 2-3 · 실제 실행 (침묵 → 위반 강제 → 경고)
 
+> ⚠️ **위반 검출 시 반드시 실제 디스코드로 발송한다 (미리보기만 하고 끝내지 말 것).**
+> 경고 웹훅 URL 이 유효하면(2-0 확인) `curl` 로 DISCORD_WEBHOOK_URL_ALERTS 에 embed 를 POST 해
+> **실제 알림이 채널에 뜨는 것까지 눈으로 보여준다.** URL 이 없을 때만 embed 미리보기로 대체.
+
 ```
 ▶ 3회 실행으로 침묵과 경고를 대비:
 
   1회차 · 정상 임계값 (ROAS WARN 2.0):
     → 체크 결과 표 : 리치 캠페인 ROAS 0.43 → CRITICAL 1건 검출
       (목적이 '도달' 캠페인이므로 권고문에 맥락 주석이 붙는 것 확인)
-    → #marketing-alerts 에 경고 1건 발송
+    → #marketing-alerts 에 경고 1건 [실제 발송] → HTTP 204 확인 → 채널에서 카드 확인
 
   2회차 · 침묵 시연 (임계값을 일시적으로 ROAS WARN 0.1 로 낮춤):
     → 위반 0건 → "발송 없음" : 터미널엔 체크 로그만, 디스코드는 조용함 (시연 하이라이트)
+      (이때는 curl 을 아예 호출하지 않는 것이 침묵 원칙의 증명)
 
   3회차 · 시뮬레이션 (THRESHOLD_ROAS_WARN=10.0 으로 위반 강제):
-    → 전 캠페인 위반 → 다건 경고 포맷 + 에스컬레이션 조건 설명 (알림 장면 결정적 재현)
+    → 전 캠페인 위반 → 다건 경고 포맷 [실제 발송] + 에스컬레이션 조건 설명 (알림 장면 결정적 재현)
     → 시연 후 임계값 원복 ⏸ 원복 확인 필수
 ```
 
-⏸ 각 회차 결과 확인 후 3단계로.
+**실제 발송 스니펫** (제목에 [실습·샘플] 명시 · 색상 danger 15548997):
+```bash
+set -a; source .env 2>/dev/null; set +a
+curl -s -o /dev/null -w "HTTP %{http_code}\n" \
+  -H "Content-Type: application/json" -X POST \
+  -d '{"username":"광고 감시 에이전트","embeds":[{
+        "title":"🔴 [실습·샘플] 광고 성과 경고 — {캠페인명}",
+        "description":"기준선을 넘겨 알람이 울렸습니다.",
+        "color":15548997,
+        "fields":[
+          {"name":"📉 ROAS","value":"{값} (기준선 {WARN} 미달)"},
+          {"name":"💡 권고","value":"지출 일시정지 검토 · 예산 변경은 사람 승인 후"}
+        ],
+        "footer":{"text":"marketing-os · 6-5 실습"}}]}' \
+  "$DISCORD_WEBHOOK_URL_ALERTS"
+# HTTP 204 = 발송 성공 → 디스코드 #marketing-alerts 확인
+```
+
+⏸ 각 회차 결과(특히 1·3회차의 HTTP 204) 확인 후 3단계로.
 
 ---
 
@@ -157,7 +224,7 @@ test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
 🚀 그럼, 지금부터 내 업무에 적용해볼까요?
 
    ① 어떤 브랜드/업종인가요?
-   ② 감시할 임계값은?                   (ROAS·CPA·CTR 기준선 — 모르면 업종 기본값)
+   ② 알람 울릴 기준선은?                (ROAS·CPA·CTR — 2-0 업종 프리셋 재사용, 모르면 기본값)
    ③ 경고를 어디로 받을까요?            (Discord 채널 / 일단 미리보기)
 ```
 
@@ -180,6 +247,45 @@ test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
 
 🔁 다음 클립
   A. "6-6 실습 시작" : A/B 테스트 판정 (Part 6 마지막)
-  B. 시간당 cron 등록으로 실가동 (Part 10 에서 정식 연결)
+  B. 아래 "시간당 자동 가동 스위치" 로 24/7 워치독 켜기 (Part 10 에서 심화)
   C. 본인 계정 기준으로 임계값 튜닝 (업종별 CPA 가 다름)
 ```
+
+### ⏰ 시간당 자동 가동 스위치 켜기 (선택)
+
+> 지금까지는 **"수동 1회"** 였다. 이제 시계에 물려 **매시간 0분마다 스스로 돌게** 만든다.
+> 화재경보기를 벽에 나사로 고정하는 단계 — 감시 로직(본체)은 이미 완성됐고, 여기선 **"언제 돌지"만** 연결한다.
+> ⚠️ 실제 등록은 사용자 시스템을 바꾸므로 **반드시 사용자 승인 후** 실행. (Part 10 에서 정식 심화)
+
+```
+🔧 스위치는 이미 만들어져 있다 : automation/hourly-ad-check.cron
+   0 * * * * cd "{프로젝트경로}" && claude --agent ad-performance-checker >> automation/logs/ad-check-$(date +%Y-%m-%d).log 2>&1
+   → 뜻 : "매시간 0분에, ad-performance-checker 를 실행하고, 결과를 날짜별 로그에 남겨라"
+   → cron 시간표 읽는 법 :  분 시 일 월 요일  ·  0 * * * * = 매시간 0분 · 0 9 * * 1 = 매주 월 09:00
+```
+
+**설치 방법 2가지** (사용자가 고름 · 경로의 `/Users/me/marketing-os` 를 실제 경로로 치환 필수) :
+
+```bash
+# ── 방법 A. crontab (간단·빠름) ──────────────────────────
+mkdir -p automation/logs
+P="$(pwd)"                        # 현재 프로젝트 절대경로 자동 획득
+LINE="0 * * * * cd \"$P\" && /usr/local/bin/claude --agent ad-performance-checker >> \"$P/automation/logs/ad-check-\$(date +\%Y-\%m-\%d).log\" 2>&1"
+( crontab -l 2>/dev/null | grep -v ad-performance-checker; echo "$LINE" ) | crontab -   # 중복 없이 등록
+crontab -l | grep ad-performance-checker && echo "✅ 매시간 등록 완료"
+
+# ── 방법 B. launchd (macOS 권장·재부팅 후에도 유지) ───────
+#   automation/README.md 의 .plist 예시를 ~/Library/LaunchAgents/ 에 저장 후:
+#   launchctl load ~/Library/LaunchAgents/com.marketing-os.hourly-ad-check.plist
+```
+
+```
+✅ 등록 검증
+  · crontab -l 로 항목 존재 확인
+  · 첫 정각 이후 automation/logs/ad-check-{날짜}.log 생성 확인
+  · 로그에 "위반 0건 → 발송 없음(침묵)" 또는 경고 발송 기록이 쌓임
+
+⏹ 끄는 법 (원복) : crontab -e 에서 해당 줄 삭제 / launchctl unload …plist
+```
+
+⏸ **자동 가동을 켤까요?** (예 → 경로 치환 후 등록 · 아니오 → 수동 1회 유지, Part 10 에서 연결)

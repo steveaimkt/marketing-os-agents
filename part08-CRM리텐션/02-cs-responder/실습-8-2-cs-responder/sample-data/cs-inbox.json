@@ -1,0 +1,18 @@
+{
+  "description": "CS 인박스 픽스처 (결로아 가상 · 7건). 4분류가 모두 1건 이상 포함되어 분류·신뢰도·승인 게이트가 결정적으로 재현된다. from/이메일/핸들은 전부 가상.",
+  "classes_legend": {
+    "🟢": "단순 FAQ (배송·환불정책·사이즈) — 위키 검색 → 초안 → ✅ reaction 시에만 자동 발송",
+    "🟡": "제품 문의 (성분·사용법) — 초안 + 출처 명시 → 사람 검토 후 발송",
+    "🟠": "불만/환불 요청 — 초안 + 'CS팀 필요' 태그 → CS팀 멘션",
+    "🔴": "클레임/법적 분쟁 가능 — 답변 안 함, CS팀 즉시 알림"
+  },
+  "messages": [
+    {"id": "M1", "channel": "gmail", "from": "seoyeon.kim@gmail.com", "text": "포어 토너 주문했는데 배송 얼마나 걸리나요?", "expected_class": "🟢 단순 FAQ", "expected_confidence": 0.96, "wiki_ref": "§1 배송정책"},
+    {"id": "M2", "channel": "discord", "from": "@jieun_skin", "text": "제주도인데 도서산간 배송비 따로 붙나요?", "expected_class": "🟢 단순 FAQ", "expected_confidence": 0.93, "wiki_ref": "§1 배송정책"},
+    {"id": "M3", "channel": "gmail", "from": "junho.park@naver.com", "text": "토너에 나이아신아마이드 들어있나요? 아침에도 발라도 되나요?", "expected_class": "🟡 제품 문의", "expected_confidence": 0.90, "wiki_ref": "§3 성분·사용법"},
+    {"id": "M4", "channel": "sns", "from": "@glow_mina", "text": "이거 지성 피부에도 괜찮아요? 사용 순서 알려주세요", "expected_class": "🟡 제품 문의", "expected_confidence": 0.88, "wiki_ref": "§3 성분·사용법"},
+    {"id": "M5", "channel": "gmail", "from": "minjun.choi@daum.net", "text": "받은 지 5일 됐는데 환불하고 싶어요. 개봉했는데 가능한가요?", "expected_class": "🟠 불만/환불", "expected_confidence": 0.91, "wiki_ref": "§2 환불정책"},
+    {"id": "M6", "channel": "discord", "from": "@arin_bae_", "text": "토너 쓰고 얼굴 다 뒤집어졌어요. 이거 피부과 진단서 받아서 소비자원에 신고할 거예요. 손해배상 청구하겠습니다.", "expected_class": "🔴 클레임/법적", "expected_confidence": 0.95, "wiki_ref": "없음 — 답변 안 함, CS팀 즉시 알림"},
+    {"id": "M7", "channel": "gmail", "from": "subin.lim@kakao.com", "text": "환불 신청했는데 아직 입금이 안 됐어요. 언제 처리되나요?", "expected_class": "🟠 불만/환불", "expected_confidence": 0.87, "wiki_ref": "§2 환불정책"}
+  ]
+}

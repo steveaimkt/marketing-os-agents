@@ -12,8 +12,10 @@ description: |
   - "구글 광고 분석 실습" / "구글 애즈 실습 시작하자"
   - "google-ads-analyzer 실습" / "검색 키워드 성과 시연"
 
-  동작: 한 줄 → 3 단계 인터랙티브 → 키워드 성과 + 검색어 리포트 + 품질점수 경고 +
-  제외 키워드 후보 4건 (Discord) → 다음 클립 (6-3) 제안.
+  동작: 한 줄 → 3 단계 인터랙티브 → outputs/{날짜}/google-ads-analyzer/google-ads-keyword-{날짜}.html 리포트
+  (KPI 카드 4 + 검색광고 전용 도식 3종[인라인 SVG] + 3섹션표 + 제외 키워드 후보 4건 + 보완 제안 6건) +
+  Notion 아카이브 1행 + Discord embed(HTML 첨부 + Notion 링크) → 다음 클립 (6-3) 제안.
+  ※ 산출물 예시: sample-output/google-ads-keyword-report.html (6-1 과 동일한 3종 도착지 구조, 도식만 검색광고 특성에 맞게 재설계).
 ---
 
 # Part 6 / 6-2 · Google Ads 분석 에이전트 실습 : 소개 → 실행 → 활용
@@ -43,13 +45,16 @@ description: |
   · After  : 명령 1줄 → 3섹션 진단 + 제외 키워드 후보까지 = 2분
 
 🔌 연결 소스 (실제 의존만)
-  | 항목 | 용도 | 상태 |
-  |---|---|---|
-  | Google Ads MCP (uvx) | 검색 성과 조회 (GAQL · 읽기 전용) | {✅ / ❌} |
-  | Discord webhook      | 3섹션 진단 결과 발송              | {✅ / ❌} |
+  | # | 항목 | 용도 | 상태 |
+  |---|---|---|---|
+  | ① | Google Ads MCP (uvx)     | 검색 성과 조회 (GAQL · 읽기 전용) | {✅ / ❌} |
+  | ② | html-report-template 스킬 | 리포트 디자인 (도식만 검색광고용 재설계) | {✅ / ❌} |
+  | ③ | Notion 통합               | 리포트 아카이브                  | {✅ / ❌} |
+  | ④ | Discord webhook           | embed + HTML 첨부 발송           | {✅ / ❌} |
 
   점검 명령:
     claude mcp list 2>&1 | grep -i "google-ads"
+    test -f "skills/html-report-template/SKILL.md" && echo "리포트 템플릿 ✅"
     test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
 
   ⚠️ Google Ads 공식 MCP는 Developer Token 신청 → 승인에 1~2일이 걸릴 수 있습니다.
@@ -61,7 +66,7 @@ description: |
   · 제외 키워드는 "후보"로만 제시 — 실제 적용은 사용자 (읽기 전용 + 승인 원칙)
 ```
 
-📐 **스킬? 에이전트?** → 도구(Google Ads) + 산출(Discord 진단·HTML)이 있으니 🤖 **에이전트**. 리포트는 html-report-template **스킬** 공유. 5요소 골격은 3-1과 같다.
+📐 **스킬? 에이전트?** → 도구(Google Ads) + 산출(HTML·Notion·Discord)이 있으니 🤖 **에이전트**. 리포트 디자인은 html-report-template **스킬** 공유(6-1~6-4 동일 = DRY), 단 도식은 검색광고 특성에 맞게 재설계. 5요소 골격은 3-1과 같다.
 
 ⏸ "다음" / "실행" 받으면 2단계로.
 
@@ -87,8 +92,17 @@ test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
   → 섹션 2 검색어 리포트  : 실제 검색어 vs 매칭 키워드 정합 (전환 0 검색어 색출)
   → 섹션 3 품질점수 경고  : 7 미만 키워드 (CPC 상승 위험) + 원인 추정
   → 제외 키워드 후보 3~5건 (높은 지출 + 전환 0)
-  → Discord 발송 (적용은 사용자 수동 : 읽기 전용 원칙)
+  → HTML 리포트 (html-report-template 스킬) → outputs/{날짜}/google-ads-analyzer/
+      · KPI 카드 4 + 검색광고 전용 도식 3종(인라인 SVG) + 3섹션표 + 제외 후보 + 보완 제안 6건
+  → Notion 아카이브 1행 + Discord embed (HTML 첨부 + Notion 링크)
+  → 적용은 사용자 수동 (읽기 전용 원칙)
 ```
+
+🎨 검색광고 전용 도식 3종 (메타 6-1 과 다른 핵심 — 캠페인이 아니라 키워드/검색어 중심):
+  ① 검색 의도 분포    : 검색 클릭을 구매/비교/정보/누수로 분류 → "누수 25%" 정량화
+  ② 품질점수 × CPC    : 산점도(버블=지출·색=ROAS) + 위험 구역 → "점수 낮을수록 비싸진다"
+  ③ 키워드 포트폴리오 : ROAS × 지출 4사분면 → 💎증액 / 🚀유지 / 👀관망 / 🔴차단 자동 분류
+  + 품질점수 구성 도식 (예상 CTR + 광고 관련성 + LP 경험 → Ad Rank → CPC)
 
 📄 에이전트 정의에서 새로 볼 부분 (`agents/part6-ads/google-ads-analyzer.md`):
   ① GAQL (Google Ads Query Language) : SQL 비슷한 조회 언어를 에이전트가 대신 작성
@@ -127,7 +141,14 @@ test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
                             "21일 챌린지" 6점 (챌린지 전용 LP 부재) + 원인 추정
   5. 제외 키워드 후보 4건 정리 : 유통기한 / 영어로 / 피부과 시술 / 화장솜
                                 → 적용 방법 안내 (사용자 수동)
-  6. Discord 진단 결과 발송
+  6. HTML 리포트 생성            → outputs/{날짜}/google-ads-analyzer/google-ads-keyword-{날짜}.html
+       → 브라우저로 열어 확인 (검색광고 전용 도식 3종 · 인라인 SVG · 단일 파일·오프라인 OK)
+       · 보완 제안 6건 (검색광고 분석가 관점) : 노출점유율(IS)·매치타입 분해·검색어 n-gram·
+         마진 BEP·품질점수 구성요소·자동 입찰 시뮬 (High/Mid/Low 표기)
+  7. Notion "마케팅 OS 시작" 하위 아카이브 1행 (6-1 메타 리포트와 동일 부모)
+  8. Discord embed → #marketing-alerts
+       · 헤드라인(통합 ROAS·광고비→전환가치) + 키워드 TOP/BOTTOM + 검색어 신호 + 품질점수 경고
+       · 🔗 Notion 전문 링크 + 📎 HTML 원본 첨부 (multipart payload_json → embed+file 동시)
 ```
 
 ⏸ 결과 확인 후 3단계로.
@@ -159,8 +180,12 @@ test -f "discord-bot/webhook-config.json" && echo "webhook ✅"
   3. 경쟁사 비교 검색어 ("OO 비교") 발견 시 → 비교 LP 제작 기회로 전환
   4. 브랜드 키워드(CPC 낮고 전환 높음) 방어 예산을 우선 확보 — 잠식 방지
 
-📊 산출물:
-   · Discord : 3섹션 진단 (키워드 성과 + 검색어 리포트 + 품질점수 경고) + 제외 키워드 후보 4건
+📊 산출물 3종 (3대 도착지 표준 충족):
+   · 로컬   : outputs/{날짜}/google-ads-analyzer/google-ads-keyword-{날짜}.html
+              (KPI 카드 4 + 검색광고 전용 도식 3종 + 3섹션표 + 제외 후보 + 보완 제안 6건)
+   · Notion : 아카이브 1행 ("마케팅 OS 시작" 하위 · 6-1 과 동일 부모)
+   · Discord: embed (HTML 첨부 + Notion 링크) → #marketing-alerts
+   · 산출물 예시 파일 : sample-output/google-ads-keyword-report.html
 
    ✅ 체크리스트:
    [ ] 키워드 vs 검색어 차이를 설명할 수 있음

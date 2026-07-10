@@ -139,21 +139,30 @@ ls outputs/*/naver-ads-analyzer/*.html 2>/dev/null && echo "6-3 Naver 산출물 
   · Naver  : 지출 291만 · 합산 ROAS 1.54 (브랜드 7.41 / 일반 0.71 분리 완료)
 ```
 
-### 2-3 실제 실행
+### 2-3 실제 실행 (★ 고도화 사양 — `report-spec.md` 준수)
+
+> 표준 형식은 `report-spec.md`, 표준 템플릿은 `sample-output/3media-report-upgraded.html`.
+> 리포트는 "비교"에서 멈추지 말고 **"어디서 빼서 어디에 넣어라"**까지 답한다.
 
 ```
 ▶ 워크플로 단계별 실행:
 
   1. 3매체 결과 수집 (선행 6-1~6-3 산출물 우선 → 없으면 픽스처 → 실전은 병렬 호출)
-  2. 섹션 1 매체 비교표                     → 동일 잣대 정렬 (시연 하이라이트)
-       매체 간 ROAS 직접 비교 시 주의 주석 : 매체별 기여 모델 차이
-  3. 섹션 2 인사이트 5줄                    → 예:
-       "Meta 전환 캠페인이 효율 1위 : 챌린지 크리에이티브 타겟 적합"
-       "Naver 일반 키워드가 전체 효율을 깎는 중 : 입찰 하향 1순위"
-  4. 섹션 3 예산 재배분 제안                → 현재 33/33/33 → 제안 45/35/20 + 근거 + 예상 효과
-  5. HTML 리포트 생성                       → outputs/{날짜}/3media-report-{날짜}.html
-  6. Notion 아카이브 + Discord 요약
+       + 세그먼트 단위 분해 (Meta=광고세트 / Google=브랜드·일반·저품질 / Naver=브랜드·일반)
+  2. 매체 3색 고정 : Meta #1877F2 · Google #F59E0B · Naver #03C75A (초록 충돌 금지)
+  3. 섹션 1 다지표 매트릭스 (9지표)         → ROAS·CPC·CAC·CTR·CVR·CPM·AOV + 행별 최고/최저
+  4. 예산 최적화 코어 4종 (인라인 SVG):
+       ② 효율–지출 4분면 맵 (STAR/SCALE/CUT/PRUNE)
+       ③ 효율 프론티어 (BEP 미만 예산 % 표시)
+       ④ 재배분 워터폴 (매출 증분 원 단위 + ROAS 델타)
+       ⑤ 고의도 vs 저의도 3매체 그룹막대
+  5. 인사이트 4~5줄 + 재배분 제안(매체 % + 세그 단위 지시) + 액션 체크박스
+       매체 간 ROAS 직접 비교 주의 주석(어트리뷰션) · 재배분은 "제안"까지만
+  6. HTML 리포트 생성                       → outputs/{날짜}/3media-report-{날짜}.html
+  7. Notion 아카이브 + Discord 요약
 ```
+
+(간단 시연만 원하면 코어 4종 중 ②④ 로 축약 가능. 풀 대시보드 요청 시 보조 3종 추가.)
 
 ⏸ 리포트 확인 후 3단계로.
 
@@ -188,7 +197,8 @@ ls outputs/*/naver-ads-analyzer/*.html 2>/dev/null && echo "6-3 Naver 산출물 
 📊 산출물
 
 ```
-   · 로컬   : outputs/{날짜}/3media-report-{날짜}.html (비교표 + 인사이트 + 재배분)
+   · 로컬   : outputs/{날짜}/3media-report-{날짜}.html
+             (다지표 매트릭스 9지표 + 코어 4시각화 + 인사이트 + 재배분 · report-spec.md 준수)
    · Notion : 아카이브 1행
    · Discord: 요약 embed
 

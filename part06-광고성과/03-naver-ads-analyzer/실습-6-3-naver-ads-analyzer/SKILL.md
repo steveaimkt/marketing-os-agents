@@ -2,15 +2,16 @@
 name: 실습-6-3-naver-ads-analyzer
 description: |
   Part 6 클립 6-3 (네이버 검색광고 분석 에이전트) 실습 시연 스킬. 사용자 한 줄 명령 →
-  ① 소개 (하는 일 + 연결 소스 안내 : Naver Ads MCP 부재 → 샘플 전용 명시) →
+  ① 소개 (하는 일 + 연결 소스 : 공식 MCP 없음=REST/커뮤니티 MCP / 분석 시연은 샘플) →
   ② 실행 (작동 구조 + 데이터 준비 + 실제 실행 : 분리 집계 → 합산 ROAS 착시 해부) →
   ③ 활용 (내 업무에 적용하는 방법 + 실연동 REST API 경로).
   흐름 : ① 소개 ② 실행 ③ 활용. 자동 실행 금지. 단계마다 답 받고 다음.
-  본 클립은 샘플 데이터 전용 : 네이버 공식 MCP 부재. 실연동은 REST API 경로를 별도 안내.
+  분석 시연은 샘플 데이터(재현성·실수치 비노출). 실연동은 이미 구축됨 — 네이버 3종 도구
+  (검색광고 API·검색 MCP·데이터랩 MCP) 설명+설치법은 부록 참조. 상세는 /mcp설치-네이버 스킬.
 
   자동 호출 트리거:
   - **"6-3 실습 시작"** ⭐ 주요 트리거
-  - "네이버 광고 분석 실습" / "네이버 검색광고 실습 시작하자"
+  - "네이버 검색 광고 분석 실습" / "네이버 검색광고 실습 시작하자"
   - "naver-ads-analyzer 실습" / "브랜드 키워드 분리 시연"
 
   동작: 한 줄 → 3 단계 인터랙티브 → 브랜드 vs 일반 ROAS 분리 리포트
@@ -33,6 +34,28 @@ description: |
 
 ---
 
+## 이 스킬로 가능한 업무 (한눈에)
+
+> 발동 직후 참고용 메뉴. ①(ROAS 분리)이 6-3 주역, 나머지는 광고 없어도 즉시 가능한 시장 리서치.
+
+| # | 업무 | 데이터 소스 | 도구/명령 | 산출물 | 광고 없어도? |
+|---|---|---|---|---|---|
+| 1 | **브랜드 vs 일반 ROAS 분리** (합산 착시 해부) | 광고 성과 CSV/stats | `naver_ad_report.py` | HTML+Discord | CSV 있으면 ✅ |
+| 2 | 키워드 **월 검색량** (PC/모바일) | SearchAd `/keywordstool` | `naver_searchad.py` | 표 | ✅ |
+| 3 | **연관 키워드 확장** + 우선순위 | SearchAd `/keywordstool` | `naver_market_report.py` | TOP N | ✅ |
+| 4 | **검색 트렌드·계절성**(성수기) | DataLab 검색트렌드 | MCP/직접호출 | 12개월 차트 | ✅ |
+| 5 | **SearchAd×DataLab 교차검증** | 둘 다 | `naver_market_report.py` | 검증 판정표 | ✅ |
+| 6 | **예상 입찰가·성과 시뮬** | SearchAd `/estimate` | `naver_searchad.py` | 추정치 | ✅ |
+| 7 | **쇼핑인사이트**(성별·연령) | DataLab 쇼핑인사이트 | MCP | 세그먼트 | ✅ |
+| 8 | **집행 여부·소진액 진단** | SearchAd `/billing` | `naver_searchad.py` | 역산 금액 | ✅ |
+| 9 | 캠페인/그룹/키워드 **구조 조회** | SearchAd `/ncc/*` | `naver_searchad.py` | 구조 | ✅ |
+| 10 | **HTML 리포트** 생성 | 위 결과 | 리포트 스크립트 | 단일 HTML | ✅ |
+| 11 | **Discord 발송** (승인 게이트) | 리포트 | `--send --webhook` | embed | ✅ |
+
+> ⚠️ 쓰기 작업(광고 ON/OFF·입찰·예산 변경)은 제외 — 헌법상 승인 게이트 필수. 본 스킬은 **읽기·분석 전용**.
+
+---
+
 ## 1단계 · 소개
 
 ```
@@ -51,13 +74,16 @@ description: |
 ```
   사용자 (기간 · 기본 최근 7일)
     │
-    ├─ 📂 키워드 성과 데이터  ← 샘플 픽스처 (Naver Ads 공식 MCP 부재)
+    ├─ 🔌 검색광고 API (REST 서명)  ← 실데이터 수집 · MCP 대신 API 직접 호출
+    │     scripts/naver_searchad.py (HMAC) · 시연은 샘플 픽스처로 대체
+    ├─ 📈 데이터랩 MCP              ← 트렌드로 교차검증
     │
-    └─ 📨 Discord webhook     ← 분리 리포트 발송
+    └─ 📨 Discord webhook          ← 분리 리포트 발송
 
-  ⚠️ 네이버 검색광고는 공식 MCP 가 없습니다.
-     → 본 실습은 샘플 데이터로 "분석 로직" 을 익히는 데 집중.
-     → 실연동(본인 계정 REST API)은 3단계에서 별도 안내.
+  💡 핵심 : 네이버 검색광고는 "공식 MCP" 가 없다 → 그래서 **MCP 대신 REST API 를 직접 서명 호출**한다.
+     (= 이 에이전트의 수집부는 MCP 가 아니라 API. 검색·데이터랩은 커뮤니티 MCP 가 따로 있음)
+     → 분석 시연은 샘플 데이터로 "분석 로직" 에 집중 (재현성·실수치 비노출).
+     → 실연동(SearchAd REST API + DataLab MCP)은 이미 구축됨 — 부록 & 3단계 안내.
 ```
 
 💡 핵심 포인트
@@ -77,23 +103,27 @@ description: |
 
 ## 2단계 · 실행
 
-### 2-0 · 사전 점검 (샘플 전용 명시)
+### 2-0 · 사전 연동 점검 (3종 도구 health check)
 
 ```bash
-claude mcp list 2>&1 | grep -i "naver" || echo "naver MCP 없음 (예상된 정상 상태)"
+# ① 키 5종 · ② SearchAd 인증 · ③ DataLab 인증 · ④ webhook
+grep -oE '^NAVER_[A-Z_]+=' .env | sed 's/=$//'
+python3 scripts/naver_searchad.py GET /ncc/campaigns | head -1        # HTTP 200 = OK
 test -f "discord-bot/webhook-config.json" && echo "webhook ✅" || echo "webhook ❌"
 ```
 
 ```
-🔧 6-3 의존 항목 점검 결과
+🔧 6-3 연동 점검 결과
 
-  | # | 항목 | 용도 | 상태 | 비고 |
-  |---|---|---|---|---|
-  | ① | Naver Ads MCP    | 성과 조회   | ❌ 공식 MCP 부재 | 본 클립은 샘플 전용 |
-  | ② | Discord webhook  | 리포트 발송 | {✅ / ❌} | 10분 |
+  | # | 항목 | 용도 | 상태 |
+  |---|---|---|---|
+  | ① | 검색광고 API (REST 서명) | 광고 성과·검색량 | ✅ HTTP 200 |
+  | ② | 데이터랩 MCP            | 트렌드·쇼핑인사이트 | ✅ 등록 |
+  | ③ | Discord webhook         | 리포트 발송 | {✅ / ❌} |
 
-  ⚠️ ①은 "고치는 항목" 이 아니라 "원래 없는 항목" 입니다 (정상).
-  ❌ webhook 만 즉시 해결 후 진행.
+  ✅ 실연동은 구축 완료 (설치법은 본 스킬 부록 참조).
+  📌 단, 분석 시연은 결정성을 위해 샘플 데이터(결로아 8키워드)로 진행.
+     실데이터로 돌리려면 3단계 또는 /mcp설치-네이버 의 ④ 리포트 추출 경로.
 ```
 
 ### 2-1 · 작동 구조 (에이전트 정의 열람)
@@ -213,3 +243,167 @@ open "agents/part6-ads/naver-ads-analyzer.md"
 ```
 
 ⏸ 다음 액션 선택 받고 마무리.
+
+---
+
+## 4단계 · 내 브랜드로 직접 분석하기 (수강생 실전 가이드)
+
+> 시연(1~3단계)을 본 수강생이 **자기 브랜드 네이버 광고**를 직접 분석하는 전체 흐름.
+> 강의에서 실제로 밟은 순서 그대로다. 설치 상세·디버깅은 [부록](네이버-실연동-가이드.md) 참조.
+> 사용자가 "내 네이버 광고 분석해줘 (브랜드: ○○)" 라고 하면 이 4스텝을 순서대로 진행한다.
+
+```
+한 줄 명령 예시:
+  "내 네이버 검색광고 분석해줘. 브랜드명은 크래프트볼트야"
+  "네이버 광고 ROAS 브랜드/일반 분리해줘 + 데이터랩 교차검증까지"
+```
+
+### STEP 0 · 사전 연동 2종 (최초 1회, 각 5분)
+
+> 검색광고 = 성과 수집(REST), 데이터랩 = 수요 교차검증(MCP). **발급처가 서로 다르다**(A=광고시스템 / B=개발자센터). 둘 다 `.env` 키로 연결.
+
+#### A. 검색광고 API 연동 (광고 성과 데이터) — 마케터용 클릭 가이드
+
+> 광고 성과(노출·클릭·광고비·전환·ROAS)·검색량을 가져오는 통로. **공식 MCP 없음** → 서명 호출기 `scripts/naver_searchad.py` 사용.
+
+**A1. 3개 키 발급** (발급처 = 광고시스템 `manage.searchad.naver.com`)
+1. `manage.searchad.naver.com` 로그인 (광고주 계정)
+2. 우측 상단 **`도구`** → **`API 사용 관리`**
+3. **`네이버 검색광고 API 서비스 이용 동의`** 체크 → 동의
+4. **`등록`** → 발급된 2개 값 복사
+   - **액세스 라이선스** = `API_KEY`
+   - **비밀키(Secret Key)** = `SECRET_KEY` (한 번만 보임 → 꼭 복사)
+5. **CUSTOMER_ID(고객 ID)** = 광고시스템 우측 상단 계정 정보의 **숫자**(예: 3271573)
+   - 💡 키는 광고주 계정당 1세트. 대행사 관리 중이면 대행사에 발급 요청.
+
+**A2. `.env` 등록** (프로젝트 루트)
+```bash
+NAVER_SEARCHAD_API_KEY=01000000...        # 액세스 라이선스
+NAVER_SEARCHAD_SECRET_KEY=AQAAAAA...       # 비밀키
+NAVER_SEARCHAD_CUSTOMER_ID=3271573         # 고객 ID(숫자)
+```
+> ⚠️ `.env` 는 절대 커밋 금지 (헌법 보안 원칙 · `.gitignore` 등록됨).
+
+**A3. 검증**
+```bash
+python3 scripts/naver_searchad.py GET /ncc/campaigns
+```
+- `HTTP 200` + 캠페인 목록 → ✅ 성공 / `HTTP 200` + `[]` → 인증 정상·광고 미집행 / `401·403` → 키 오타·동의 누락
+- **한계** : `/stats` 성과는 **최근 92일만**. 과거는 광고주센터 → 보고서 → 대용량 다운로드(CSV) → `naver_ad_report.py`.
+
+#### B. 데이터랩 MCP 설치 (검색 수요·계절성) — 마케터용 클릭 가이드
+
+> 검색어 트렌드(시계열·성별·연령·디바이스)+쇼핑인사이트를 주는 **커뮤니티 MCP**(`naver-datalab-mcp-server`). 광고 성과는 못 줌 → 수요 교차검증용.
+
+**B1. 개발자센터 앱 등록** (발급처 = `developers.naver.com`)
+1. `developers.naver.com` 로그인 → 상단 **`Application`** → **`애플리케이션 등록`**
+2. 입력 :
+   - 애플리케이션 이름 : 예) `marketing-os-datalab`
+   - **사용 API** : **`데이터랩(검색어트렌드)`** + **`데이터랩(쇼핑인사이트)`** 둘 다 체크
+   - 환경 추가 : `WEB 설정` → 웹 서비스 URL `http://localhost` (데이터랩은 콜백 없어 형식상 입력)
+3. 등록 → **Client ID(긴값)** / **Client Secret(짧은값)** 발급
+
+**B2. `.env` 등록**
+```bash
+NAVER_CLIENT_ID=여기에_Client_ID_긴값
+NAVER_CLIENT_SECRET=여기에_Client_Secret_짧은값
+```
+> ⚠️ **401 의 90% = ID/SECRET 순서 뒤바뀜** → ID=긴값, SECRET=짧은값.
+
+**B3. `.mcp.json` 등록** (키 평문 노출 방지 위해 `.env` 를 bash source 로 주입 · firecrawl/buffer 와 동일 패턴)
+```json
+"naver-datalab": {
+  "command": "bash",
+  "args": ["-c", "set -a; source '<내 프로젝트 절대경로>/.env'; set +a; exec npx -y naver-datalab-mcp-server"]
+}
+```
+> 이식 시 `source '...'` 안의 **`.env` 절대경로만** 본인 경로로 교체. `npx -y` 라 첫 실행 시 패키지 자동 설치(인터넷 필요).
+
+**B4. 재시작 + 검증**
+- (1) Claude Code 재시작 → `naver-datalab` 도구(`getNaverSearchTrend` 등) 노출되면 ✅
+- (2) 재시작 없이 키만 즉시 확인 :
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" -X POST https://openapi.naver.com/v1/datalab/search \
+  -H "X-Naver-Client-Id: $NAVER_CLIENT_ID" -H "X-Naver-Client-Secret: $NAVER_CLIENT_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"startDate":"2025-06-01","endDate":"2026-05-31","timeUnit":"month","keywordGroups":[{"groupName":"전기톱","keywords":["전기톱"]}]}'
+```
+- `200` → ✅ / `401` → ID·SECRET 순서·오타 / `403` → 앱에 데이터랩 API 미추가(B1)
+
+#### A vs B 한눈에
+
+| | A. 검색광고 API | B. 데이터랩 MCP |
+|---|---|---|
+| 발급처 | manage.searchad.naver.com (광고시스템) | developers.naver.com (개발자센터) |
+| 키 | API_KEY · SECRET_KEY · CUSTOMER_ID (3개) | CLIENT_ID · CLIENT_SECRET (2개) |
+| 연결 | REST 직접(`naver_searchad.py`) | MCP 서버(`.mcp.json`) |
+| 주는 것 | 광고 성과·ROAS·검색량 | 검색 수요·계절성·성별/연령 |
+| 검증 | `naver_searchad.py GET /ncc/campaigns` | curl `datalab/search` → 200 |
+| 흔한 함정 | 92일 한계·쇼핑검색은 키워드 없음 | 401 = ID·SECRET 순서 |
+
+> 두 키 세트는 완전 별개. A만=성과 분석 / B만=수요 리서치 / **둘 다=교차검증(6-3 핵심)**. 전체 디버깅·함정은 [부록](네이버-실연동-가이드.md) 또는 `/mcp설치-네이버` 스킬.
+
+### STEP 1 · 내 계정 진단 (집행 여부 + 캠페인 유형)
+
+```bash
+python3 scripts/naver_searchad.py GET /ncc/campaigns                 # 캠페인 목록·유형
+python3 scripts/naver_searchad.py GET /stats \
+  --params '{"id":"<캠페인ID>","fields":["impCnt","clkCnt","salesAmt","ccnt"],"timeRange":{"since":"2026-06-12","until":"2026-06-18"}}'
+```
+- 확인 2가지 : ① **집행/소진이 있나?** ② **캠페인 유형이 파워링크(검색광고)인가, 쇼핑검색인가?**
+- `campaignTp` 가 `SHOPPING` 이면 입찰 키워드가 없고 **상품 단위** → 키워드 ROAS 분리가 적용 안 됨.
+
+### STEP 2 · 분석 분기 (계정 상태에 맞게)
+
+| 내 계정 상태 | 진행 방법 |
+|---|---|
+| ✅ **파워링크 + 집행 있음** | 실데이터로 바로 분리. `python3 scripts/naver_ad_report.py <보고서.csv> --brand <자사명>` (CSV는 광고주센터 → 보고서 → 대용량 다운로드) |
+| ⚠️ **쇼핑검색이거나 집행 0** | 분리 로직을 시연할 데이터가 없음 → **내 실제 캠페인 구조(상품·광고그룹명) 기반 샘플**을 만들어 분석. 집행 재개 시 동일 로직 무수정 재사용. |
+
+> 💡 두 번째 경우가 오늘 강의에서 한 방식이다. "데이터가 없다 = 분석을 못 한다" 가 아니라, **내 라인업 구조를 반영한 샘플로 분석 틀을 먼저 세우고**, 집행이 시작되면 숫자만 실데이터로 갈아끼운다.
+
+### STEP 3 · 데이터랩 교차검증 (수요 × 수익)
+
+```
+내 제품 카테고리를 5자 이하 키워드로 데이터랩 검색트렌드 조회 (월간 13개월)
+  → 평균 검색수요 + 계절 피크 파악
+  → 광고 ROAS 와 겹쳐 "수요 × 수익" 사분면으로 판정
+```
+- ⚠️ **데이터랩 검색트렌드 키워드는 5자 이하** (예: `전기톱`·`전동가위`·`전지가위`). 긴 키워드는 카테고리 대표어로 축약.
+- 판정 규칙 (오늘 도출) :
+  - 🔴 수요↓ + 수익↓ → **중단** (수요 부족 확정)
+  - 🟡 수요↑ + 수익↓ → **컷 금지·진단** (가격·LP·리뷰 문제 / 시즌 재진입)
+  - 🟢 수요↑ + 수익↑ → **확대** (시즌 피크에 예산 집중)
+- 핵심 : 광고만 보면 "적자=컷" 이지만, 데이터랩을 겹치면 **살릴 키워드와 버릴 키워드가 갈린다**.
+
+### STEP 4 · 리포트 + 산출 (헌법 3도착지)
+
+```
+HTML 리포트 (KPI + 키워드 상세표[정렬·필터] + 데이터랩 시각화 4종 + 인사이트)
+  → 로컬 outputs/{날짜}/naver-ads-analyzer/
+  → Notion 아카이브 (전문 장기보관)
+  → Discord 발송 (embed + HTML 첨부)   ⛔ 외부 발행 = 사용자 승인 게이트 필수
+```
+- 데이터랩 시각화 4종 : ① 13개월 라인+시즌 밴드 ② 카테고리 평균수요 막대 ③ 월간 수요 히트맵 ④ **수요×ROAS 사분면 버블**(버블=광고비).
+
+### ✅ 수강생 체크리스트
+
+```
+[ ] 검색광고 API 3키 발급 → /ncc/campaigns HTTP 200
+[ ] 데이터랩 MCP 설치 → datalab/search HTTP 200
+[ ] 내 계정 유형 확인 (파워링크 vs 쇼핑검색) + 집행 여부
+[ ] 실데이터 분리(파워링크) 또는 구조 기반 샘플(쇼핑검색/미집행) 중 선택
+[ ] 데이터랩으로 카테고리 수요·계절성 교차검증
+[ ] HTML + Notion + Discord(승인 후) 3도착지 산출
+```
+
+---
+
+## 부록 · 실연동 (설치·구축 가이드)
+
+> 시연은 위 1~3단계로 끝. **실데이터 연동·3종 도구 설치·전체 구축 프로세스·디버깅**은 분량이 커서 분리했다.
+
+- 📄 **[네이버-실연동-가이드.md](네이버-실연동-가이드.md)** — 같은 폴더. 3종 도구 설명+설치, STEP 1~5 구축 프로세스, 함정 메모, 참고 출처.
+- 🛠 **`/mcp설치-네이버` 스킬** — 표준 설치 5단계 (전 프로젝트 공용).
+
+한 줄 요약: 검색광고=**REST API**(공식 MCP 없음, `scripts/naver_searchad.py`), 데이터랩=**커뮤니티 MCP**. 둘 다 `.env` 키로 연동, 리포트는 HTML+Discord.

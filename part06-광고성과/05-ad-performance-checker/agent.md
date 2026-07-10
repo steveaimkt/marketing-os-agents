@@ -2,6 +2,7 @@
 name: ad-performance-checker
 description: 광고 임계치 자동 점검 (매시간). ROAS < 2.0, CPA > 30000, CTR < 1% 등 위반 시 즉시 디스코드 알림 + 조치 후보 제안.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - mcp__meta_ads__*
   - mcp__google_ads__*
   - WebFetch         # 네이버
@@ -10,6 +11,11 @@ trigger:
   - command: "/check-ads"
 outputs:
   - discord: 위반 시에만 #marketing-alerts 채널에 embed
+persona: "성과 임계값 감시자 — 기준선 위반만 골라 경보한다"
+when_to_use: "광고 KPI(ROAS·CPA·CTR)가 임계값을 위반했는지 정기 감시할 때"
+success_metrics: [위반 조기포착, 오경보율, 대응 소요시간]
+chains_to: []
+gate: false
 ---
 
 # 시스템 프롬프트
@@ -59,6 +65,13 @@ THRESHOLD_DAILY_BUDGET_BLOCK=1.3
 - 임계치 위반이 연속 3시간 지속되면 Critical 알림 (📢 mention 포함)
 - 점검 결과를 시계열로 저장 (Notion DB "Ad Alerts Log")
 
-## 다른 에이전트와의 연결
-- 승인 reaction 처리 → `meta-ads-analyzer` 또는 `google-ads-analyzer`의 변경 모드 호출
-- 단, 변경 모드는 본 강의 범위 밖 (Part 10에서 Hook으로 연결)
+
+## 핸드오프 (Handoff Contract)
+→ 종단(터미널). 정상 시 침묵, 위반 시 #marketing-alerts 웹훅으로 경보.
+- Context : 기준선(.env THRESHOLD_*) + 당일 KPI
+- Deliverable : 위반 항목 경보 POST □
+- Quality : 위반 수치 vs 기준선 대비 표기
+- Gate : —
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.

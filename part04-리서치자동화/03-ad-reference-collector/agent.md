@@ -2,6 +2,7 @@
 name: ad-reference-collector
 description: 국내외 광고 소재(Meta 광고 라이브러리, 영상, 인스타 광고)를 수집해 구글 스프레드시트에 카탈로그화. 광고 기획 시 레퍼런스 빠른 검색.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - mcp__firecrawl__*
   - mcp__google_sheets__*
   - mcp__claude_ai_Notion__*
@@ -11,6 +12,11 @@ trigger:
 outputs:
   - google-sheets: "광고 레퍼런스 카탈로그"에 신규 행 추가
   - notion: 주간 광고 인사이트 페이지
+persona: "광고 스와이프 큐레이터 — 잘 만든 광고를 수집·해부해 패턴으로 남긴다"
+when_to_use: "경쟁·업계 광고 레퍼런스를 모아 카탈로그+패턴 인사이트가 필요할 때"
+success_metrics: [수집 광고 수, 도출 패턴 수, 재사용된 레퍼런스 수]
+chains_to: [ad-copy-ab]
+gate: false
 ---
 
 # 시스템 프롬프트
@@ -55,3 +61,14 @@ outputs:
 ## 활용
 - Part 5 `ad-copy-ab` 에이전트가 변형 후보 생성 시 이 카탈로그를 참고
 - Part 6 `meta-ads-analyzer`가 본 광고 vs 레퍼런스 평균 비교
+
+
+## 핸드오프 (Handoff Contract)
+→ ad-copy-ab
+- Context : 수집 광고 카탈로그(시트) + 패턴 인사이트 + gbrain 태그
+- Deliverable : 패턴을 반영한 카피 10패턴 □
+- Quality : 어떤 레퍼런스 패턴을 썼는지 근거 표기
+- Gate : —
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.

@@ -1,0 +1,11 @@
+{
+  "description": "SNS 멘션 픽스처 (voc-analyzer 결과 재활용 형태). 결로아 가상 · 6건. handle는 있으나 이메일/전화가 없는 건이 섞여 있어 매칭 우선순위(이메일>전화>이름)와 미매칭 처리가 재현된다.",
+  "mentions": [
+    {"date": "2026-06-29", "handle": "@seoyeon_daily", "email": "seoyeon.kim@gmail.com", "phone": "", "mention": "결로아 포어토너 3개월째 재구매 중 ✨ 모공 진짜 줄었어요"},
+    {"date": "2026-06-26", "handle": "@jieun_skin", "email": "", "phone": "010-4567-8901", "mention": "결로아 세안 후 진정력 최고. (이메일 미공개, DM에서 번호만 확인)"},
+    {"date": "2026-06-23", "handle": "@yerin_oh", "email": "yerin.oh@naver.com", "phone": "", "mention": "결로아 신상 언제 나와요? 기다리는 중"},
+    {"date": "2026-07-01", "handle": "@doyoon_k", "email": "", "phone": "010-7890-1234", "mention": "예전에 잘 썼던 결로아 다시 살까 고민… (오래 쉬었던 고객의 재접촉 신호)"},
+    {"date": "2026-06-28", "handle": "@arin_bae_", "email": "", "phone": "", "mention": "배아린 인데요, 결로아 성분표 어디서 봐요? (이메일·전화 없음 → 이름만으로 매칭 후보, 저신뢰)"},
+    {"date": "2026-07-02", "handle": "@glow_mina", "email": "", "phone": "", "mention": "결로아 광고 보고 처음 왔어요! (이메일·전화·이름 매칭 불가 → 미매칭, 검토 대기)"}
+  ]
+}

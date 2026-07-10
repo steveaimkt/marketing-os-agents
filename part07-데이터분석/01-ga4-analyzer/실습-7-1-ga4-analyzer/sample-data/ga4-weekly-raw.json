@@ -1,0 +1,94 @@
+{
+  "description": "GA4 주간 원본 픽스처 (결로아 가상 GA4 속성). ga4-analyzer가 추출하는 5개 데이터셋 = ① 채널 성과 ② 페이지 TOP ③ 전환 경로 ④ 신규 vs 재방문 ⑤ 장치별. 최근 7일 + 전주 비교. 통화: KRW. 수치는 내부 정합(세션×전환율≈전환, 채널·장치·신규재방문 합계가 총계와 일치)하며 유료채널 효율 상승·모바일 전환율 저조·재방문 고전환의 뚜렷한 신호를 포함한다. 이 픽스처는 절대 수정하지 않는다(재현성 보존).",
+  "property": "결로아 GA4 속성 (가상 · properties/000000000)",
+  "period": {"current": "2026-06-22 ~ 2026-06-28", "previous": "2026-06-15 ~ 2026-06-21"},
+  "totals": {
+    "current": {"sessions": 37800, "conversions": 1168, "conversion_rate": 3.09, "revenue": 38050000, "new_users": 24800, "returning_users": 7600},
+    "previous": {"sessions": 36400, "conversions": 1076, "conversion_rate": 2.96, "revenue": 34460000}
+  },
+
+  "dataset_1_channels": {
+    "note": "채널 그룹 × 세션·전환·전환율·매출. 합계 = totals. Paid Search 매출 +25.6% WoW·전환율 3.96%(최고)로 유료채널 효율 상승 신호.",
+    "rows": [
+      {"channel": "Organic Search", "current": {"sessions": 14200, "conversions": 412, "conversion_rate": 2.90, "revenue": 12360000}, "previous": {"sessions": 13600, "conversions": 395, "revenue": 11850000}},
+      {"channel": "Paid Search",    "current": {"sessions": 9800,  "conversions": 388, "conversion_rate": 3.96, "revenue": 13580000}, "previous": {"sessions": 9200,  "conversions": 322, "revenue": 10810000}},
+      {"channel": "Direct",         "current": {"sessions": 6100,  "conversions": 214, "conversion_rate": 3.51, "revenue": 7490000},  "previous": {"sessions": 5900,  "conversions": 205, "revenue": 7180000}},
+      {"channel": "Social",         "current": {"sessions": 5300,  "conversions": 96,  "conversion_rate": 1.81, "revenue": 2880000},  "previous": {"sessions": 5100,  "conversions": 90,  "revenue": 2700000}},
+      {"channel": "Referral",       "current": {"sessions": 2400,  "conversions": 58,  "conversion_rate": 2.42, "revenue": 1740000},  "previous": {"sessions": 2600,  "conversions": 64,  "revenue": 1920000}}
+    ]
+  },
+
+  "dataset_2_top_pages": {
+    "note": "랜딩 페이지 TOP 10 × 세션·전환·이탈률. 상위 10개 세션 합 34,600 + 기타 3,200 = 37,800. 포어 토너 V2 상세가 전환율 5.5%로 최고 전환 페이지, 블로그·브랜드스토리는 이탈률 68~71%.",
+    "rows": [
+      {"page": "/ (홈)",                          "sessions": 8600, "conversions": 198, "bounce_rate": 38.2},
+      {"page": "/products/pore-toner-v2 (포어 토너 V2 상세)", "sessions": 6200, "conversions": 342, "bounce_rate": 28.5},
+      {"page": "/event/21day-challenge (21일 챌린지)", "sessions": 4900, "conversions": 256, "bounce_rate": 31.0},
+      {"page": "/products/glow-serum (글로우 세럼)",  "sessions": 3400, "conversions": 128, "bounce_rate": 41.6},
+      {"page": "/collections/best (베스트 컬렉션)",   "sessions": 2800, "conversions": 74,  "bounce_rate": 45.3},
+      {"page": "/blog/toner-guide (토너 가이드 글)",  "sessions": 2600, "conversions": 22,  "bounce_rate": 68.4},
+      {"page": "/products/cica-cream (시카 크림)",    "sessions": 2100, "conversions": 61,  "bounce_rate": 44.8},
+      {"page": "/event/first-order (첫구매 혜택)",    "sessions": 1700, "conversions": 89,  "bounce_rate": 26.1},
+      {"page": "/reviews (리뷰 모음)",               "sessions": 1400, "conversions": 31,  "bounce_rate": 52.0},
+      {"page": "/about/brand-story (브랜드 스토리)",  "sessions": 900,  "conversions": 8,   "bounce_rate": 71.2}
+    ]
+  },
+
+  "dataset_3_conversion_paths": {
+    "note": "소스/매체 → 랜딩 → 전환 (전환 상위 경로). google/cpc→챌린지, direct·organic→포어 토너 상세가 핵심 유입 경로.",
+    "rows": [
+      {"source_medium": "google / cpc",       "landing": "/event/21day-challenge",      "conversions": 142},
+      {"source_medium": "google / organic",   "landing": "/products/pore-toner-v2",     "conversions": 118},
+      {"source_medium": "naver / organic",     "landing": "/ (홈)",                       "conversions": 96},
+      {"source_medium": "(direct) / none",     "landing": "/products/pore-toner-v2",     "conversions": 88},
+      {"source_medium": "meta / cpc",          "landing": "/products/glow-serum",        "conversions": 76},
+      {"source_medium": "newsletter / email",  "landing": "/event/first-order",          "conversions": 63},
+      {"source_medium": "instagram / social",  "landing": "/event/21day-challenge",      "conversions": 54}
+    ]
+  },
+
+  "dataset_4_new_vs_returning": {
+    "note": "사용자 유형 비교. 재방문 전환율 6.02% = 신규 1.90%의 3.2배, 재방문이 매출의 63%를 기여. 리텐션·CRM(Part 8) 연계 신호.",
+    "rows": [
+      {"user_type": "신규 (New)",        "current": {"users": 24800, "sessions": 26900, "conversions": 512, "conversion_rate": 1.90, "revenue": 14200000}, "previous": {"sessions": 26200, "conversions": 486, "revenue": 13100000}},
+      {"user_type": "재방문 (Returning)", "current": {"users": 7600,  "sessions": 10900, "conversions": 656, "conversion_rate": 6.02, "revenue": 23850000}, "previous": {"sessions": 10200, "conversions": 590, "revenue": 21360000}}
+    ]
+  },
+
+  "dataset_5_devices": {
+    "note": "장치별 Desktop/Mobile/Tablet. 모바일 세션 68%(25,700)인데 전환율 2.46%로 데스크톱 4.58%의 절반 수준 → 모바일 전환율 저조(체크아웃·UX 최적화 신호).",
+    "rows": [
+      {"device": "Mobile",  "current": {"sessions": 25700, "conversions": 632, "conversion_rate": 2.46, "revenue": 18600000}, "previous": {"sessions": 24600, "conversions": 590, "revenue": 16800000}},
+      {"device": "Desktop", "current": {"sessions": 10600, "conversions": 486, "conversion_rate": 4.58, "revenue": 17900000}, "previous": {"sessions": 10300, "conversions": 448, "revenue": 16200000}},
+      {"device": "Tablet",  "current": {"sessions": 1500,  "conversions": 50,  "conversion_rate": 3.33, "revenue": 1550000},  "previous": {"sessions": 1500,  "conversions": 38,  "revenue": 1460000}}
+    ]
+  },
+
+  "dataset_6_daily_trend": {
+    "note": "일별 세션·전환 (7-2 선차트용). 합계 = 세션 37,800 · 전환 1,168 (totals와 일치).",
+    "rows": [
+      {"date": "2026-06-22 (월)", "sessions": 5100, "conversions": 158},
+      {"date": "2026-06-23 (화)", "sessions": 5400, "conversions": 168},
+      {"date": "2026-06-24 (수)", "sessions": 5600, "conversions": 172},
+      {"date": "2026-06-25 (목)", "sessions": 5800, "conversions": 181},
+      {"date": "2026-06-26 (금)", "sessions": 5900, "conversions": 189},
+      {"date": "2026-06-27 (토)", "sessions": 5200, "conversions": 158},
+      {"date": "2026-06-28 (일)", "sessions": 4800, "conversions": 142}
+    ]
+  },
+
+  "expected_analysis": {
+    "wow_summary": "세션 37,800 (+3.8%) · 전환 1,168 (+8.6%) · 매출 38,050,000원 (+10.4%) · 전환율 3.09% (+0.13%p)",
+    "signal_paid": "Paid Search 매출 13,580,000원 (+25.6% WoW) · 전환율 3.96%로 전 채널 최고 → 유료채널 효율 상승, 예산 증액 검토",
+    "signal_mobile": "모바일 세션 점유 68%(25,700)이나 전환율 2.46% = 데스크톱 4.58%의 54% → 모바일 체크아웃·UX 최적화가 최우선 개선 과제",
+    "signal_retention": "재방문 전환율 6.02% = 신규 1.90%의 3.2배 · 재방문이 매출 63%(23,850,000원) 기여 → 리텐션·CRM 연계 (Part 8)",
+    "signal_pages": "최고 전환 페이지 /products/pore-toner-v2 (전환율 5.5%) → 트래픽 집중 가치 / /blog/toner-guide·/about/brand-story 이탈률 68~71% → 콘텐츠→상품 CTA 보강",
+    "recommended_actions": [
+      "Paid Search 예산 +15% 증액 후 전환율 유지 여부 재확인",
+      "모바일 결제 단계 축소·간편결제 도입 A/B (전환율 갭 해소)",
+      "재방문 고전환 세그먼트 대상 리텐션 이메일·리타게팅 확대",
+      "포어 토너 V2 상세로 유료·오가닉 트래픽 집중 (LP 우선순위)",
+      "블로그·브랜드스토리 페이지에 상품 연결 CTA·관련상품 모듈 추가"
+    ]
+  }
+}

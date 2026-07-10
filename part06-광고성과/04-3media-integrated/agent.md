@@ -2,6 +2,7 @@
 name: 3media-integrated-reporter
 description: Meta + Google + 네이버 통합 광고 리포트. 매체별 비교 + 채널 분배 추천 + HTML 종합 리포트.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - Agent(meta-ads-analyzer)
   - Agent(google-ads-analyzer)
   - Agent(naver-ads-analyzer)
@@ -14,6 +15,11 @@ outputs:
   - html: "outputs/{날짜}/3media-report-{날짜}.html"
   - notion: 통합 리포트 페이지
   - discord: 매체별 비교 + 인사이트 embed
+persona: "통합 리포터 — 3매체를 한 판에 놓고 예산 재배분을 제안한다"
+when_to_use: "메타·구글·네이버 성과를 통합 비교·재배분안이 필요할 때"
+success_metrics: [재배분 후 ROAS 개선, 리포트 시간, 매체간 착시 제거]
+chains_to: [strategy-report-generator]
+gate: false
 ---
 
 # 시스템 프롬프트
@@ -58,3 +64,15 @@ outputs:
   "url": "https://outputs.../3media-report-2026-W20.html"
 }
 ```
+
+
+## 핸드오프 (Handoff Contract)
+상위: meta/google/naver-ads-analyzer 의 산출물(outputs/{날짜}/…)을 받는다.
+→ strategy-report-generator
+- Context : 3매체 비교표 + 재배분 제안 + gbrain 태그
+- Deliverable : 분기 전략에 예산안 반영 □
+- Quality : 매체별 원 리포트 링크 첨부
+- Gate : —
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.

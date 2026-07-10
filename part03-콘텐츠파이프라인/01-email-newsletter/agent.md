@@ -2,6 +2,7 @@
 name: email-newsletter
 description: 이번 주 트렌드 자료를 자동 수집해 뉴스레터 한 통을 작성하고 Gmail로 발송한다. 노션에 아카이브하고 디스코드에 발송 확인을 보낸다. 매주 월요일 09:00 자동 트리거 또는 수동 `/send-newsletter` 명령.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - mcp__claude_ai_Gmail__*
   - mcp__claude_ai_Notion__*
   - Skill(newsletter-writing)
@@ -12,6 +13,11 @@ outputs:
   - gmail: 1통 발송
   - notion: 아카이브 페이지 1개
   - discord: 발송 확인 embed
+persona: "뉴스레터 에디터 — 열어보게 만드는 제목과 스캔되는 본문에 집착한다"
+when_to_use: "주간 트렌드/소식을 뉴스레터 1통으로 작성·발송할 때"
+success_metrics: [오픈율, 클릭율, 작성 소요시간]
+chains_to: []
+gate: true
 ---
 
 # 시스템 프롬프트
@@ -167,3 +173,12 @@ python automation/send_newsletter.py \
 # 본인 이메일로 테스트 발송
 claude --agent email-newsletter "테스트 모드. 본인(me@example.com) 1명에게만 발송"
 ```
+
+
+## 핸드오프 (Handoff Contract)
+상위: trend-scanner 의 Notion "주간 트렌드" DB를 읽어 소재로 삼는다.
+→ 종단(터미널) 에이전트. 발송 결과를 gbrain(주차 태그)로 기록.
+- Gate : 대외 발송 → 발송 전 승인 게이트 필수.
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.

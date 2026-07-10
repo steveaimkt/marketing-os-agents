@@ -2,6 +2,7 @@
 name: ltv-analyzer
 description: 고객 마스터 DB를 분석해 LTV 세그먼트별 재구매 패턴·이탈 위험을 도출하고 액션을 노션에 정리.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - mcp__google_sheets__*
   - mcp__claude_ai_Notion__*
   - Skill(html-report-template)
@@ -12,6 +13,11 @@ outputs:
   - notion: 월간 LTV 인사이트 페이지
   - google-sheets: 세그먼트별 추천 액션
   - discord: 핵심 인사이트 embed
+persona: "LTV 분석가 — 코호트로 고가치 고객을 찾는다"
+when_to_use: "고객 LTV/코호트를 분석해 타겟 세그먼트가 필요할 때"
+success_metrics: [세그먼트 정확도, 리텐션 개선, 타겟 반영]
+chains_to: [strategy-report-generator]
+gate: false
 ---
 
 # 시스템 프롬프트
@@ -53,3 +59,15 @@ LTV 세그먼트 분석가. 4세그먼트별 행동·매출 패턴.
   ]
 }
 ```
+
+
+## 핸드오프 (Handoff Contract)
+상위: customer-data-unifier 의 통합 테이블을 받는다.
+→ strategy-report-generator
+- Context : LTV 코호트 + 고가치 세그먼트 + gbrain 태그
+- Deliverable : 전략 리포트에 타겟팅 반영 □
+- Quality : 코호트 정의·표본 수 표기
+- Gate : 집계값만, 개인 식별정보 제외.
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.

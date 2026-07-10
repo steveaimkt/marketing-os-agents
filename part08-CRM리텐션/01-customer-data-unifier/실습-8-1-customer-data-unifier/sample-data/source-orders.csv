@@ -1,0 +1,21 @@
+name,email,phone,order_date,amount
+김서연,seoyeon.kim@gmail.com,010-2345-6789,2026-01-14,38000
+김서연,seoyeon.kim@gmail.com,010-2345-6789,2026-03-02,52000
+김 서연,seoyeon.kim@gmail.com,,2026-05-20,44000
+김서연,seoyeon.kim@gmail.com,010-2345-6789,2026-06-18,61000
+김서연,seoyeon.kim@gmail.com,010-2345-6789,2026-06-30,49000
+이지은,jieun.lee@gmail.com,010-4567-8901,2026-02-10,55000
+이지은,jieun.lee@gmail.com,010-4567-8901,2026-04-05,48000
+이지은,jieun.lee@gmail.com,010-4567-8901,2026-06-28,63000
+한지호,jiho.han@gmail.com,010-1234-5678,2026-01-30,41000
+한지호,jiho.han@gmail.com,010-1234-5678,2026-03-22,58000
+한지호,jiho.han@gmail.com,010-1234-5678,2026-06-25,66000
+박준호,junho.park@naver.com,010-3456-7890,2026-02-18,33000
+박준호,junho.park@naver.com,010-3456-7890,2026-05-09,39000
+정하윤,hayoon.jung@gmail.com,010-6789-0123,2026-03-11,29000
+정하윤,hayoon.jung@gmail.com,010-6789-0123,2026-05-27,45000
+임수빈,subin.lim@kakao.com,010-9012-3456,2026-04-19,36000
+임수빈,subin.lim@kakao.com,010-9012-3456,2026-06-08,42000
+최민준,minjun.choi@daum.net,010-5678-9012,2026-04-10,31000
+강도윤,doyoon.kang@naver.com,010-7890-1234,2025-12-15,27000
+윤서아,seoa.yoon@gmail.com,010-8901-2345,2026-04-25,34000

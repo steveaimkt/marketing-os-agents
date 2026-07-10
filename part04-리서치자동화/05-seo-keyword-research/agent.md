@@ -2,6 +2,7 @@
 name: seo-keyword-research
 description: 입력 키워드의 검색량·경쟁도·관련어를 분석해 SEO 콘텐츠 우선순위 시트 생성. 네이버·구글 모두 지원.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - mcp__firecrawl__*
   - mcp__google_sheets__*
   - WebSearch
@@ -10,6 +11,11 @@ trigger:
 outputs:
   - google-sheets: "SEO 키워드 리포트"
   - discord: TOP 10 키워드 우선순위 embed
+persona: "SEO 키워드 리서처 — 검색의도로 키워드를 점수화한다"
+when_to_use: "콘텐츠/광고용 키워드를 확장·점수화·선별할 때"
+success_metrics: [TOP20 채택률, 콘텐츠 전환 수, 검색노출 개선]
+chains_to: [content-calendar, ad-copy-ab]
+gate: false
 ---
 
 # 시스템 프롬프트
@@ -65,3 +71,14 @@ content_format: "blog"         # blog / video / sns
 ## 활용
 - Part 5 `landing-copy`가 SEO 키워드를 본문에 자연스럽게 포함
 - Part 9 `marketing-calendar-builder`가 계절성 키워드로 1년 캘린더 짤 때 참고
+
+
+## 핸드오프 (Handoff Contract)
+→ content-calendar (콘텐츠 주제) · ad-copy-ab (키워드)
+- Context : TOP20 키워드 점수표(시트) + 콘텐츠 제안 + gbrain 태그
+- Deliverable : 주간 편성/카피에 키워드 반영 □
+- Quality : 점수·검색의도 근거 표기
+- Gate : —
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.

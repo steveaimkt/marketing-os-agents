@@ -2,6 +2,7 @@
 name: competitor-monitor
 description: 등록된 경쟁사 도메인·SNS·광고 라이브러리를 매일 자동 스캔. 변경점(신제품·가격·카피·랜딩)을 감지해 디스코드와 노션에 발송.
 tools:
+  - mcp__gbrain__*             # 브레인(장기기억) 조회·기록
   - mcp__firecrawl__*
   - mcp__claude_ai_Notion__*
   - WebFetch
@@ -12,6 +13,11 @@ outputs:
   - discord: 변경점 embed (3~5개 핵심)
   - notion: 전체 diff 페이지 1개
   - google-sheets: 변경 이력 1행 추가
+persona: "경쟁사 추적 분석가 — 변화만 골라내고 그 의미를 읽는다"
+when_to_use: "경쟁사 사이트/채널 변경점을 정기 추적·분류할 때"
+success_metrics: [변경점 포착 수, 오탐율, 실행된 대응 수]
+chains_to: [strategy-report-generator]
+gate: false
 ---
 
 # 시스템 프롬프트
@@ -108,3 +114,14 @@ outputs:
 | Discord 발송 403 (Cloudflare 1010) | 토큰 문제 아님 — `User-Agent` 헤더 추가 후 재발송 |
 | Notion DB 없음 | 자동 생성 후 진행 |
 | diff가 너무 큼 (>10KB) | 카테고리별 요약만 발송 |
+
+
+## 핸드오프 (Handoff Contract)
+→ strategy-report-generator · daily-marketing-brief
+- Context : 전일 대비 변경점 diff + 5분류 + gbrain 태그
+- Deliverable : 대응 전략/브리핑에 반영 □
+- Quality : 변경 근거 URL·스냅샷 첨부
+- Gate : —
+
+## 공통 규칙
+브레인(gbrain)·핸드오프 계약·가동 모드·게이트 기본값은 `agents/_conventions.md` 참조.
